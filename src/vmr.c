@@ -2,24 +2,37 @@
 #include <stdio.h>
 #include "vmr.h"
 
-enum kind
-{
-    BASIC = 1,
-    BANANA,
-    POTATO,
-    POTATOX64 = 6
-} kind;
-
-long login(T_VBVMR_INTERFACE *iVMR)
+long login(T_VBVMR_INTERFACE *iVMR, int kind)
 {
     int rep;
 
     rep = iVMR->VBVMR_Login();
+    Sleep(20);
     if (rep == 1)
     {
-        rep = run_voicemeeter(iVMR);
-        puts("Launching Voicemeeter GUI");
+        rep = run_voicemeeter(iVMR, kind);
+        switch (kind)
+        {
+        case BASIC:
+            puts("Launching Voicemeeter Basic GUI");
+            break;
+        case BANANA:
+            puts("Launching Voicemeeter Banana GUI");
+            break;
+        case POTATO:
+            puts("Launching Voicemeeter Potato GUI");
+            break;
+        case POTATOX64:
+            puts("Launching Voicemeeter Potato x64 GUI");
+            break;
+        }
+
         Sleep(1200);
+    }
+    if (rep == 0)
+    {
+        puts("Successfully logged into the Voicemeeter API");
+        clear_dirty(iVMR);
     }
     return rep;
 }
@@ -30,11 +43,8 @@ long logout(T_VBVMR_INTERFACE *iVMR)
     return iVMR->VBVMR_Logout();
 }
 
-long run_voicemeeter(T_VBVMR_INTERFACE *iVMR)
+long run_voicemeeter(T_VBVMR_INTERFACE *iVMR, int kind)
 {
-    int kind = POTATO;
-    if (sizeof(void *) == 8)
-        kind = POTATOX64;
     return iVMR->VBVMR_RunVoicemeeter((long)kind);
 }
 

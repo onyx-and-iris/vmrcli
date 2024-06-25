@@ -4,9 +4,17 @@
 #ifndef __VMR_H__
 #define __VMR_H__
 
-long login(T_VBVMR_INTERFACE *iVMR);
+enum kind
+{
+    BASIC = 1,
+    BANANA,
+    POTATO,
+    POTATOX64 = 6
+};
+
+long login(T_VBVMR_INTERFACE *iVMR, int kind);
 long logout(T_VBVMR_INTERFACE *iVMR);
-long run_voicemeeter(T_VBVMR_INTERFACE *iVMR);
+long run_voicemeeter(T_VBVMR_INTERFACE *iVMR, int kind);
 long type(T_VBVMR_INTERFACE *iVMR, long *type);
 long version(T_VBVMR_INTERFACE *iVMR, long *version);
 
