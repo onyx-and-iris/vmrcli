@@ -63,6 +63,26 @@ bool pdirty(T_VBVMR_INTERFACE *iVMR)
     return iVMR->VBVMR_IsParametersDirty() == 1;
 }
 
+long get_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float *f)
+{
+    return iVMR->VBVMR_GetParameterFloat(param, f);
+}
+
+long get_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s)
+{
+    return iVMR->VBVMR_GetParameterStringA(param, s);
+}
+
+long set_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float val)
+{
+    return iVMR->VBVMR_SetParameterFloat(param, val);
+}
+
+long set_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s)
+{
+    return iVMR->VBVMR_SetParameterStringA(param, s);
+}
+
 long set_parameters(T_VBVMR_INTERFACE *iVMR, char *command)
 {
     return iVMR->VBVMR_SetParameters(command);

@@ -7,10 +7,28 @@
 
 #define MAX_LINE 1024
 
-void help(char *progname);
+enum
+{
+    FLOAT_T,
+    STRING_T,
+};
+
+struct result
+{
+    int type;
+    union val
+    {
+        float f;
+        char s[512];
+    } val;
+};
+
+void help(void);
 int set_kind(char *kval);
 int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind);
 void interactive(T_VBVMR_INTERFACE *vmr);
+void parse_command(T_VBVMR_INTERFACE *vmr, char *command);
+struct result *get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res);
 
 int main(int argc, char *argv[])
 {
@@ -30,7 +48,7 @@ int main(int argc, char *argv[])
             kvalue = optarg;
             break;
         case 'h':
-            help(argv[0]);
+            help();
             exit(EXIT_SUCCESS);
         default:
             abort();
@@ -59,7 +77,7 @@ int main(int argc, char *argv[])
     {
         for (int i = optind; i < argc; i++)
         {
-            set_parameters(vmr, argv[i]);
+            parse_command(vmr, argv[i]);
         }
     }
 
@@ -75,14 +93,13 @@ int main(int argc, char *argv[])
     }
 }
 
-void help(char *progname)
+void help()
 {
-    printf(
-        "Usage: ./%s [-i] [-k] <api commands>\n"
+    puts(
+        "Usage: ./vmrcli.exe [-i] [-k] <api commands>\n"
         "Where: \n"
         "\ti: Enable interactive mode\n"
-        "\tk: The kind of Voicemeeter (basic, banana, potato)\n",
-        progname);
+        "\tk: The kind of Voicemeeter (basic, banana, potato)");
 }
 
 int set_kind(char *kval)
@@ -144,6 +161,50 @@ void interactive(T_VBVMR_INTERFACE *vmr)
         if (strlen(input) == 2 && (strncmp(input, "Q", 1) == 0 || strncmp(input, "q", 1) == 0))
             break;
 
-        set_parameters(vmr, input);
+        parse_command(vmr, input);
     }
+}
+
+void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
+{
+    printf("Parsing %s\n", command);
+    if (command[0] == '!') /* toggle */
+    {
+        puts("Toggle");
+        return;
+    }
+
+    if (strchr(command, '=') != NULL) /* set */
+    {
+        set_parameters(vmr, command);
+    }
+    else /* get */
+    {
+        struct result res = {.type = FLOAT_T};
+
+        get(vmr, command, &res);
+        switch (res.type)
+        {
+        case FLOAT_T:
+            printf("%.2f\n", res.val.f);
+            break;
+        case STRING_T:
+            printf("%s\n", res.val.s);
+            break;
+        default:
+            printf("Unknown result...");
+            break;
+        }
+    }
+}
+
+struct result *get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res)
+{
+    if (get_parameter_float(vmr, command, &res->val.f) != 0)
+    {
+        res->type = STRING_T;
+        get_parameter_string(vmr, command, res->val.s);
+    }
+
+    return res;
 }
