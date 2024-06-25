@@ -124,7 +124,7 @@ void interactive(T_VBVMR_INTERFACE *vmr)
 
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
-        if (strncmp(input, "Q", 1) == 0 || strncmp(input, "q", 1) == 0)
+        if (strlen(input) == 2 && (strncmp(input, "Q", 1) == 0 || strncmp(input, "q", 1) == 0))
             break;
 
         set_parameters(vmr, input);
