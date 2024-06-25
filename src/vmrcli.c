@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     T_VBVMR_INTERFACE *vmr = &iVMR;
 
     int rep = init_voicemeeter(vmr, kind);
-    if (rep)
+    if (rep != 0)
     {
         exit(EXIT_FAILURE);
     }
@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     }
 
     rep = logout(vmr);
-    if (!rep)
+    if (rep == 0)
     {
         puts("Successfully logged out of Voicemeeter API");
         return EXIT_SUCCESS;
