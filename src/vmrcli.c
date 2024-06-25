@@ -7,6 +7,7 @@
 
 #define MAX_LINE 1024
 
+void help(char *progname);
 int set_kind(char *kval);
 int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind);
 void interactive(T_VBVMR_INTERFACE *vmr);
@@ -14,21 +15,23 @@ void interactive(T_VBVMR_INTERFACE *vmr);
 int main(int argc, char *argv[])
 {
     bool iflag = false;
-    int c;
-    char *kvalue;
+    int opt;
+    char *kvalue = "";
     int kind = BANANA;
 
-    while ((c = getopt(argc, argv, "k:i")) != -1)
+    while ((opt = getopt(argc, argv, "k:ih")) != -1)
     {
-        switch (c)
+        switch (opt)
         {
         case 'i':
             iflag = true;
             break;
         case 'k':
             kvalue = optarg;
-            kind = set_kind(kvalue);
             break;
+        case 'h':
+            help(argv[0]);
+            exit(EXIT_SUCCESS);
         default:
             abort();
         }
@@ -36,6 +39,10 @@ int main(int argc, char *argv[])
 
     static T_VBVMR_INTERFACE iVMR;
     T_VBVMR_INTERFACE *vmr = &iVMR;
+    if (kvalue && kvalue[0] != '\0')
+    {
+        kind = set_kind(kvalue);
+    }
 
     int rep = init_voicemeeter(vmr, kind);
     if (rep != 0)
@@ -66,6 +73,16 @@ int main(int argc, char *argv[])
     {
         return EXIT_FAILURE;
     }
+}
+
+void help(char *progname)
+{
+    printf(
+        "Usage: ./%s [-i] [-k] <api commands>\n"
+        "Where: \n"
+        "\ti: Enable interactive mode\n"
+        "\tk: The kind of Voicemeeter (basic, banana, potato)\n",
+        progname);
 }
 
 int set_kind(char *kval)
