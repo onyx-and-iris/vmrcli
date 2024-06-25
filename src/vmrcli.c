@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     rep = logout(vmr);
     if (rep == 0)
     {
-        puts("Successfully logged out of Voicemeeter API");
+        puts("Successfully logged out of the Voicemeeter API");
         return EXIT_SUCCESS;
     }
     else
