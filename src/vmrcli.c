@@ -168,10 +168,16 @@ void interactive(T_VBVMR_INTERFACE *vmr)
 
 void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
 {
-    printf("Parsing %s\n", command);
     if (command[0] == '!') /* toggle */
     {
-        puts("Toggle");
+        command++;
+        struct result res = {.type = FLOAT_T};
+
+        get(vmr, command, &res);
+        if (res.type == FLOAT_T)
+        {
+            set_parameter_float(vmr, command, 1 - res.val.f);
+        }
         return;
     }
 
@@ -190,10 +196,10 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
             printf("%.2f\n", res.val.f);
             break;
         case STRING_T:
-            printf("%s\n", res.val.s);
+            puts(res.val.s);
             break;
         default:
-            printf("Unknown result...");
+            fputs("Unknown result...", stderr);
             break;
         }
     }
@@ -201,6 +207,7 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
 
 struct result *get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res)
 {
+    clear_dirty(vmr);
     if (get_parameter_float(vmr, command, &res->val.f) != 0)
     {
         res->type = STRING_T;

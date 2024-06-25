@@ -21,6 +21,8 @@ long version(T_VBVMR_INTERFACE *iVMR, long *version);
 bool pdirty(T_VBVMR_INTERFACE *iVMR);
 long get_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float *f);
 long get_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s);
+long set_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float val);
+long set_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s);
 long set_parameters(T_VBVMR_INTERFACE *iVMR, char *command);
 
 bool mdirty(T_VBVMR_INTERFACE *iVMR);
