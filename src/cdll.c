@@ -6,9 +6,11 @@
 /**                           GET VOICEMEETER DIRECTORY                       **/
 /*******************************************************************************/
 
-static char uninstDirKey[] = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
-
 #define INSTALLER_UNINST_KEY "VB:Voicemeeter {17359A74-1236-5467}"
+
+#ifndef KEY_WOW64_32KEY
+#define KEY_WOW64_32KEY 0x0200
+#endif
 
 void remove_name_in_path(char *szPath)
 {
@@ -22,10 +24,6 @@ void remove_name_in_path(char *szPath)
         *p = '\0';
 }
 
-#ifndef KEY_WOW64_32KEY
-#define KEY_WOW64_32KEY 0x0200
-#endif
-
 bool __cdecl registry_get_voicemeeter_folder(char *szDir)
 {
     char szKey[256];
@@ -35,6 +33,7 @@ bool __cdecl registry_get_voicemeeter_folder(char *szDir)
     LONG rep;
     DWORD pptype = REG_SZ;
     sss[0] = 0;
+    const char uninstDirKey[] = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
 
     // build Voicemeeter uninstallation key
     strcpy(szKey, uninstDirKey);
@@ -70,20 +69,19 @@ bool __cdecl registry_get_voicemeeter_folder(char *szDir)
 /*******************************************************************************/
 /**                                GET DLL INTERFACE                          **/
 /*******************************************************************************/
-static HMODULE G_H_Module = NULL;
-
 long initialize_dll_interfaces(T_VBVMR_INTERFACE *iVMR)
 {
+    HMODULE G_H_Module = NULL;
     char szDllName[1024];
     memset(iVMR, 0, sizeof(T_VBVMR_INTERFACE));
 
-    // get folder where is installed Voicemeeter
+    // get Voicemeeter installation directory
     if (!registry_get_voicemeeter_folder(szDllName))
     {
-        // voicemeeter not installed
+        // Voicemeeter not installed
         return -100;
     }
-    // use right dll according O/S type
+    // use right dll according to O/S type
     if (sizeof(void *) == 8)
         strcat(szDllName, "\\VoicemeeterRemote64.dll");
     else
