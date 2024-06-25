@@ -6,6 +6,7 @@
 #include "vmr.h"
 
 #define MAX_LINE 1024
+#define MAX_LABEL_LEN 512
 
 enum
 {
@@ -19,7 +20,7 @@ struct result
     union val
     {
         float f;
-        char s[512];
+        char s[MAX_LABEL_LEN];
     } val;
 };
 
