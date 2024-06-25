@@ -25,9 +25,10 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(BIN_DIR) $(OBJ_DIR):
-	mkdir -p $@
+	pwsh -Command New-Item -Path $@ -ItemType Directory
 
 clean:
-	@$(RM) -rv $(EXE) $(OBJ_DIR)
+	pwsh -Command Remove-Item -Recurse $(EXE)
+	pwsh -Command Remove-Item -Recurse $(OBJ_DIR)
 
 -include $(OBJ:.o=.d)
