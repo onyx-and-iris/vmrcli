@@ -177,7 +177,7 @@ void interactive(T_VBVMR_INTERFACE *vmr)
             char command[MAX_LINE];
             int i = 0;
 
-            while (!isspace(*p) && *p != EOF)
+            while (!isspace(*p))
                 command[i++] = *p++;
             command[i] = '\0';
             p++; /* shift to next char */
