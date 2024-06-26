@@ -58,7 +58,7 @@ long version(T_VBVMR_INTERFACE *iVMR, long *version)
     return iVMR->VBVMR_GetVoicemeeterType(version);
 }
 
-bool pdirty(T_VBVMR_INTERFACE *iVMR)
+bool is_pdirty(T_VBVMR_INTERFACE *iVMR)
 {
     return iVMR->VBVMR_IsParametersDirty() == 1;
 }
@@ -106,6 +106,6 @@ long macrobutton_setstatus(T_VBVMR_INTERFACE *iVMR, long n, float val, long mode
 void clear_dirty(T_VBVMR_INTERFACE *iVMR)
 {
     Sleep(30);
-    while (pdirty(iVMR))
+    while (is_pdirty(iVMR))
         Sleep(1);
 }

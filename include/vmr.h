@@ -18,7 +18,7 @@ long run_voicemeeter(T_VBVMR_INTERFACE *iVMR, int kind);
 long type(T_VBVMR_INTERFACE *iVMR, long *type);
 long version(T_VBVMR_INTERFACE *iVMR, long *version);
 
-bool pdirty(T_VBVMR_INTERFACE *iVMR);
+bool is_pdirty(T_VBVMR_INTERFACE *iVMR);
 long get_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float *f);
 long get_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s);
 long set_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float val);
