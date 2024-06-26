@@ -5,8 +5,7 @@
 #include "cdll.h"
 #include "vmr.h"
 
-#define MAX_LINE 1024
-#define MAX_LABEL_LEN 512
+#define MAX_LINE 512
 
 enum
 {
@@ -20,7 +19,7 @@ struct result
     union val
     {
         float f;
-        char s[MAX_LABEL_LEN];
+        char s[MAX_LINE];
     } val;
 };
 
