@@ -44,6 +44,10 @@ Scripts can be loaded from text files, for example:
 ./vbantxt-cli -D1 $(Get-Content .\example_commands.txt)
 ```
 
+## `Official Documentation`
+
+- [Voicemeeter Remote C API](https://github.com/onyx-and-iris/Voicemeeter-SDK/blob/main/VoicemeeterRemoteAPI.pdf)
+
 ## `Special Thanks`
 
 - [rxi](https://github.com/rxi) for writing the [log.c](https://github.com/rxi/log.c) package
