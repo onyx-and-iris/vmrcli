@@ -39,6 +39,12 @@ int main(int argc, char *argv[])
     int dvalue;
     int kind = BANANA;
 
+    if (argc == 1)
+    {
+        help();
+        return EXIT_SUCCESS;
+    }
+
     log_set_level(LOG_INFO);
 
     while ((opt = getopt(argc, argv, "k:ihD:")) != -1)
@@ -102,7 +108,7 @@ void help()
         "Where: \n"
         "\ti: Enable interactive mode\n"
         "\tk: The kind of Voicemeeter (basic, banana, potato)\n"
-        "\tD: Set Debug level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL");
+        "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL");
 }
 
 int set_kind(char *kval)
