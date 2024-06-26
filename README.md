@@ -41,7 +41,7 @@ Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then prin
 Scripts can be loaded from text files, for example:
 
 ```powershell
-./vbantxt-cli -D1 $(Get-Content .\example_commands.txt)
+./vmrcli.exe -D1 $(Get-Content .\example_commands.txt)
 ```
 
 ## `Official Documentation`
