@@ -41,5 +41,5 @@ Launch banana GUI, set debug level to DEBUG, set Strip 0 label to podmic then pr
 Scripts can be loaded from text files, for example:
 
 ```powershell
-./vbantxt-cli $(Get-Content .\example_commands.txt)
+./vbantxt-cli -D1 $(Get-Content .\example_commands.txt)
 ```

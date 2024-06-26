@@ -1,0 +1,7 @@
+strip[0].mute 
+!strip[0].mute 
+strip[0].mute
+strip[1].mute=1
+strip[1].mute
+strip[0].gain
+strip[0].label
