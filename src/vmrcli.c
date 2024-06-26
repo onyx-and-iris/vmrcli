@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 void help()
 {
     puts(
-        "Usage: ./vmrcli.exe [-i] [-k] <api commands>\n"
+        "Usage: ./vmrcli.exe [-i] [-k] [-D] <api commands>\n"
         "Where: \n"
         "\ti: Enable interactive mode\n"
         "\tk: The kind of Voicemeeter (basic, banana, potato)\n"
