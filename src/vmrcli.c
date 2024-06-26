@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    static T_VBVMR_INTERFACE iVMR;
+    T_VBVMR_INTERFACE iVMR;
     T_VBVMR_INTERFACE *vmr = &iVMR;
     if (kvalue && kvalue[0] != '\0')
     {
