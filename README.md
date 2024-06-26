@@ -28,11 +28,11 @@ Where:
 
 Examples:
 
-Launch basic GUI, set debug level to INFO, Toggle Strip 0 Mute, then print its new value
+Launch basic GUI, set log level to INFO, Toggle Strip 0 Mute, then print its new value
 
 `./vmrcli.exe -kbasic -D2 !strip[0].mute strip[0].mute`
 
-Launch banana GUI, set debug level to DEBUG, set Strip 0 label to podmic then print Strip 2 label
+Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then print Strip 2 label
 
 `vmrcli.exe -kbanana -D1 strip[0].label=podmic strip[2].label`
 
