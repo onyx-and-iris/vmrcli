@@ -34,7 +34,7 @@ Launch basic GUI, set log level to INFO, Toggle Strip 0 Mute, then print its new
 
 Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then print Strip 2 label
 
-`vmrcli.exe -kbanana -D1 strip[0].label=podmic strip[2].label`
+`./vmrcli.exe -kbanana -D1 strip[0].label=podmic strip[2].label`
 
 ## `Script files`
 
