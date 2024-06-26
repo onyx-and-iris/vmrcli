@@ -88,7 +88,7 @@ long set_parameters(T_VBVMR_INTERFACE *iVMR, char *command)
     return iVMR->VBVMR_SetParameters(command);
 }
 
-bool mdirty(T_VBVMR_INTERFACE *iVMR)
+bool is_mdirty(T_VBVMR_INTERFACE *iVMR)
 {
     return iVMR->VBVMR_MacroButton_IsDirty() == 1;
 }

@@ -25,7 +25,7 @@ long set_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float val);
 long set_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s);
 long set_parameters(T_VBVMR_INTERFACE *iVMR, char *command);
 
-bool mdirty(T_VBVMR_INTERFACE *iVMR);
+bool is_mdirty(T_VBVMR_INTERFACE *iVMR);
 long macrobutton_getstatus(T_VBVMR_INTERFACE *iVMR, long n, float *val, long mode);
 long macrobutton_setstatus(T_VBVMR_INTERFACE *iVMR, long n, float val, long mode);
 
