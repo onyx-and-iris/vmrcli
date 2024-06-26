@@ -155,18 +155,33 @@ int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind)
 void interactive(T_VBVMR_INTERFACE *vmr)
 {
     char input[MAX_LINE];
+    char *p = input;
 
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
         if (strlen(input) == 2 && (strncmp(input, "Q", 1) == 0 || strncmp(input, "q", 1) == 0))
             break;
 
-        parse_command(vmr, input);
+        while (*p)
+        {
+            char command[MAX_LINE];
+            int i = 0;
+
+            while (!isspace(*p))
+                command[i++] = *p++;
+            command[i] = '\0';
+            p++; /* shift to next char */
+
+            parse_command(vmr, command);
+        }
+
+        p = input; /* reset pointer */
     }
 }
 
 void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
 {
+    printf("Parsing %s\n", command);
     if (command[0] == '!') /* toggle */
     {
         command++;
@@ -210,7 +225,11 @@ struct result *get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res)
     if (get_parameter_float(vmr, command, &res->val.f) != 0)
     {
         res->type = STRING_T;
-        get_parameter_string(vmr, command, res->val.s);
+        if (get_parameter_string(vmr, command, res->val.s) != 0)
+        {
+            res->val.s[0] = 0;
+            fputs("Unknown parameter", stderr);
+        }
     }
 
     return res;
