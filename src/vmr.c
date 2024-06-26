@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include "vmr.h"
+#include "log.h"
 
 long login(T_VBVMR_INTERFACE *iVMR, int kind)
 {
@@ -14,16 +15,16 @@ long login(T_VBVMR_INTERFACE *iVMR, int kind)
         switch (kind)
         {
         case BASIC:
-            puts("Launching Voicemeeter Basic GUI");
+            log_info("Launching Voicemeeter Basic GUI");
             break;
         case BANANA:
-            puts("Launching Voicemeeter Banana GUI");
+            log_info("Launching Voicemeeter Banana GUI");
             break;
         case POTATO:
-            puts("Launching Voicemeeter Potato GUI");
+            log_info("Launching Voicemeeter Potato GUI");
             break;
         case POTATOX64:
-            puts("Launching Voicemeeter Potato x64 GUI");
+            log_info("Launching Voicemeeter Potato x64 GUI");
             break;
         }
 
@@ -31,7 +32,7 @@ long login(T_VBVMR_INTERFACE *iVMR, int kind)
     }
     if (rep == 0)
     {
-        puts("Successfully logged into the Voicemeeter API");
+        log_info("Successfully logged into the Voicemeeter API");
         clear_dirty(iVMR);
     }
     return rep;
@@ -39,8 +40,13 @@ long login(T_VBVMR_INTERFACE *iVMR, int kind)
 
 long logout(T_VBVMR_INTERFACE *iVMR)
 {
+    int rep;
+
     Sleep(20); /* give time for last command */
-    return iVMR->VBVMR_Logout();
+    rep = iVMR->VBVMR_Logout();
+    if (rep == 0)
+        log_info("Successfully logged out of the Voicemeeter API");
+    return rep;
 }
 
 long run_voicemeeter(T_VBVMR_INTERFACE *iVMR, int kind)

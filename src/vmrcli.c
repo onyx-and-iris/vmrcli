@@ -4,6 +4,7 @@
 #include <getopt.h>
 #include "cdll.h"
 #include "vmr.h"
+#include "log.h"
 
 #define MAX_LINE 512
 
@@ -35,9 +36,12 @@ int main(int argc, char *argv[])
     bool iflag = false;
     int opt;
     char *kvalue = "";
+    int dvalue;
     int kind = BANANA;
 
-    while ((opt = getopt(argc, argv, "k:ih")) != -1)
+    log_set_level(LOG_INFO);
+
+    while ((opt = getopt(argc, argv, "k:ihD:")) != -1)
     {
         switch (opt)
         {
@@ -46,10 +50,17 @@ int main(int argc, char *argv[])
             break;
         case 'k':
             kvalue = optarg;
+            kind = set_kind(kvalue);
             break;
         case 'h':
             help();
             exit(EXIT_SUCCESS);
+        case 'D':
+            if ((dvalue = atoi(optarg)) && dvalue >= LOG_TRACE && dvalue <= LOG_FATAL)
+            {
+                log_set_level(dvalue);
+            }
+            break;
         default:
             abort();
         }
@@ -57,10 +68,6 @@ int main(int argc, char *argv[])
 
     T_VBVMR_INTERFACE iVMR;
     T_VBVMR_INTERFACE *vmr = &iVMR;
-    if (kvalue && kvalue[0] != '\0')
-    {
-        kind = set_kind(kvalue);
-    }
 
     int rep = init_voicemeeter(vmr, kind);
     if (rep != 0)
@@ -83,14 +90,9 @@ int main(int argc, char *argv[])
 
     rep = logout(vmr);
     if (rep == 0)
-    {
-        puts("Successfully logged out of the Voicemeeter API");
         return EXIT_SUCCESS;
-    }
     else
-    {
         return EXIT_FAILURE;
-    }
 }
 
 void help()
@@ -99,7 +101,8 @@ void help()
         "Usage: ./vmrcli.exe [-i] [-k] <api commands>\n"
         "Where: \n"
         "\ti: Enable interactive mode\n"
-        "\tk: The kind of Voicemeeter (basic, banana, potato)");
+        "\tk: The kind of Voicemeeter (basic, banana, potato)\n"
+        "\tD: Set Debug level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL");
 }
 
 int set_kind(char *kval)
@@ -159,7 +162,8 @@ void interactive(T_VBVMR_INTERFACE *vmr)
 
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
-        if (strlen(input) == 2 && (strncmp(input, "Q", 1) == 0 || strncmp(input, "q", 1) == 0))
+        input[strcspn(input, "\n")] = 0;
+        if (strlen(input) == 1 && (strncmp(input, "Q", 1) == 0 || strncmp(input, "q", 1) == 0))
             break;
 
         while (*p)
@@ -167,7 +171,7 @@ void interactive(T_VBVMR_INTERFACE *vmr)
             char command[MAX_LINE];
             int i = 0;
 
-            while (!isspace(*p))
+            while (!isspace(*p) && *p != EOF)
                 command[i++] = *p++;
             command[i] = '\0';
             p++; /* shift to next char */
@@ -181,7 +185,8 @@ void interactive(T_VBVMR_INTERFACE *vmr)
 
 void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
 {
-    printf("Parsing %s\n", command);
+    log_debug("Parsing %s", command);
+
     if (command[0] == '!') /* toggle */
     {
         command++;
