@@ -51,6 +51,7 @@ long logout(T_VBVMR_INTERFACE *iVMR)
 
 long run_voicemeeter(T_VBVMR_INTERFACE *iVMR, int kind)
 {
+    log_trace("VBVMR_RunVoicemeeter(%d)", kind);
     return iVMR->VBVMR_RunVoicemeeter((long)kind);
 }
 
@@ -71,26 +72,31 @@ bool is_pdirty(T_VBVMR_INTERFACE *iVMR)
 
 long get_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float *f)
 {
+    log_trace("VBVMR_GetParameterFloat(%s, %f)", param, f);
     return iVMR->VBVMR_GetParameterFloat(param, f);
 }
 
 long get_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s)
 {
+    log_trace("VBVMR_GetParameterStringA(%s, %s)", param, s);
     return iVMR->VBVMR_GetParameterStringA(param, s);
 }
 
 long set_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float val)
 {
+    log_trace("VBVMR_SetParameterFloat(%s, %f)", param, val);
     return iVMR->VBVMR_SetParameterFloat(param, val);
 }
 
 long set_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s)
 {
+    log_trace("VBVMR_SetParameterStringA(%s, %s)", param, s);
     return iVMR->VBVMR_SetParameterStringA(param, s);
 }
 
 long set_parameters(T_VBVMR_INTERFACE *iVMR, char *command)
 {
+    log_trace("VBVMR_SetParameters(%s)", command);
     return iVMR->VBVMR_SetParameters(command);
 }
 
