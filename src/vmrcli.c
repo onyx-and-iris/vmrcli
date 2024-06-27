@@ -226,7 +226,7 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
         switch (res.type)
         {
         case FLOAT_T:
-            printf("%.2f\n", res.val.f);
+            printf("%.1f\n", res.val.f);
             break;
         case STRING_T:
             puts(res.val.s);
