@@ -4,15 +4,15 @@
 #include "vmr.h"
 #include "log.h"
 
-long login(T_VBVMR_INTERFACE *iVMR, int kind)
+long login(T_VBVMR_INTERFACE *vmr, int kind)
 {
     int rep;
     long v;
 
-    rep = iVMR->VBVMR_Login();
+    rep = vmr->VBVMR_Login();
     if (rep == 1)
     {
-        run_voicemeeter(iVMR, kind);
+        run_voicemeeter(vmr, kind);
         switch (kind)
         {
         case BASIC:
@@ -35,14 +35,14 @@ long login(T_VBVMR_INTERFACE *iVMR, int kind)
         endwait = time(NULL) + timeout;
         do
         {
-            if ((rep = version(iVMR, &v)) == 0)
+            if ((rep = version(vmr, &v)) == 0)
                 break;
             Sleep(50);
         } while (time(NULL) < endwait);
     }
     if (rep == 0)
     {
-        version(iVMR, &v);
+        version(vmr, &v);
         long v1 = (v & 0xFF000000) >> 24,
              v2 = (v & 0x00FF0000) >> 16,
              v3 = (v & 0x0000FF00) >> 8,
@@ -50,94 +50,94 @@ long login(T_VBVMR_INTERFACE *iVMR, int kind)
         char version_s[128];
         sprintf(version_s, "%i.%i.%i.%i", (int)v1, (int)v2, (int)v3, (int)v4);
         log_info("Successfully logged into the Voicemeeter API v%s", version_s);
-        clear_dirty(iVMR);
+        clear_dirty(vmr);
     }
     return rep;
 }
 
-long logout(T_VBVMR_INTERFACE *iVMR)
+long logout(T_VBVMR_INTERFACE *vmr)
 {
     int rep;
 
     Sleep(20); /* give time for last command */
-    rep = iVMR->VBVMR_Logout();
+    rep = vmr->VBVMR_Logout();
     if (rep == 0)
         log_info("Successfully logged out of the Voicemeeter API");
     return rep;
 }
 
-long run_voicemeeter(T_VBVMR_INTERFACE *iVMR, int kind)
+long run_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind)
 {
     log_trace("VBVMR_RunVoicemeeter(%d)", kind);
-    return iVMR->VBVMR_RunVoicemeeter((long)kind);
+    return vmr->VBVMR_RunVoicemeeter((long)kind);
 }
 
-long type(T_VBVMR_INTERFACE *iVMR, long *type)
+long type(T_VBVMR_INTERFACE *vmr, long *type)
 {
     log_trace("VBVMR_GetVoicemeeterType(<long> *t)");
-    return iVMR->VBVMR_GetVoicemeeterType(type);
+    return vmr->VBVMR_GetVoicemeeterType(type);
 }
 
-long version(T_VBVMR_INTERFACE *iVMR, long *version)
+long version(T_VBVMR_INTERFACE *vmr, long *version)
 {
     log_trace("VBVMR_GetVoicemeeterVersion(<long> *v)");
-    return iVMR->VBVMR_GetVoicemeeterVersion(version);
+    return vmr->VBVMR_GetVoicemeeterVersion(version);
 }
 
-bool is_pdirty(T_VBVMR_INTERFACE *iVMR)
+bool is_pdirty(T_VBVMR_INTERFACE *vmr)
 {
     log_trace("VBVMR_IsParametersDirty()");
-    return iVMR->VBVMR_IsParametersDirty() == 1;
+    return vmr->VBVMR_IsParametersDirty() == 1;
 }
 
-long get_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float *f)
+long get_parameter_float(T_VBVMR_INTERFACE *vmr, char *param, float *f)
 {
     log_trace("VBVMR_GetParameterFloat(%s, <float> *f)", param, f);
-    return iVMR->VBVMR_GetParameterFloat(param, f);
+    return vmr->VBVMR_GetParameterFloat(param, f);
 }
 
-long get_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s)
+long get_parameter_string(T_VBVMR_INTERFACE *vmr, char *param, char *s)
 {
     log_trace("VBVMR_GetParameterStringA(%s, <char> *s)", param, s);
-    return iVMR->VBVMR_GetParameterStringA(param, s);
+    return vmr->VBVMR_GetParameterStringA(param, s);
 }
 
-long set_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float val)
+long set_parameter_float(T_VBVMR_INTERFACE *vmr, char *param, float val)
 {
     log_trace("VBVMR_SetParameterFloat(%s, %.1f)", param, val);
-    return iVMR->VBVMR_SetParameterFloat(param, val);
+    return vmr->VBVMR_SetParameterFloat(param, val);
 }
 
-long set_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s)
+long set_parameter_string(T_VBVMR_INTERFACE *vmr, char *param, char *s)
 {
     log_trace("VBVMR_SetParameterStringA(%s, %s)", param, s);
-    return iVMR->VBVMR_SetParameterStringA(param, s);
+    return vmr->VBVMR_SetParameterStringA(param, s);
 }
 
-long set_parameters(T_VBVMR_INTERFACE *iVMR, char *command)
+long set_parameters(T_VBVMR_INTERFACE *vmr, char *command)
 {
     log_trace("VBVMR_SetParameters(%s)", command);
-    return iVMR->VBVMR_SetParameters(command);
+    return vmr->VBVMR_SetParameters(command);
 }
 
-bool is_mdirty(T_VBVMR_INTERFACE *iVMR)
+bool is_mdirty(T_VBVMR_INTERFACE *vmr)
 {
-    return iVMR->VBVMR_MacroButton_IsDirty() == 1;
+    return vmr->VBVMR_MacroButton_IsDirty() == 1;
 }
 
-long macrobutton_getstatus(T_VBVMR_INTERFACE *iVMR, long n, float *val, long mode)
+long macrobutton_getstatus(T_VBVMR_INTERFACE *vmr, long n, float *val, long mode)
 {
-    return iVMR->VBVMR_MacroButton_GetStatus(n, val, mode);
+    return vmr->VBVMR_MacroButton_GetStatus(n, val, mode);
 }
 
-long macrobutton_setstatus(T_VBVMR_INTERFACE *iVMR, long n, float val, long mode)
+long macrobutton_setstatus(T_VBVMR_INTERFACE *vmr, long n, float val, long mode)
 {
-    return iVMR->VBVMR_MacroButton_SetStatus(n, val, mode);
+    return vmr->VBVMR_MacroButton_SetStatus(n, val, mode);
 }
 
-void clear_dirty(T_VBVMR_INTERFACE *iVMR)
+void clear_dirty(T_VBVMR_INTERFACE *vmr)
 {
     Sleep(30);
-    while (is_pdirty(iVMR))
+    while (is_pdirty(vmr))
         Sleep(1);
 }

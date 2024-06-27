@@ -29,7 +29,7 @@ int set_kind(char *kval);
 int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind);
 void interactive(T_VBVMR_INTERFACE *vmr);
 void parse_command(T_VBVMR_INTERFACE *vmr, char *command);
-struct result *get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res);
+void get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res);
 
 int main(int argc, char *argv[])
 {
@@ -237,7 +237,7 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
     }
 }
 
-struct result *get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res)
+void get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res)
 {
     clear_dirty(vmr);
     if (get_parameter_float(vmr, command, &res->val.f) != 0)
@@ -249,6 +249,4 @@ struct result *get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res)
             log_error("Unknown parameter");
         }
     }
-
-    return res;
 }
