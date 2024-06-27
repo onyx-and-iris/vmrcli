@@ -38,7 +38,7 @@ Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then prin
 
 ## `Script files`
 
-Scripts can be loaded from text files, for example:
+Scripts can be loaded from text files, for example in Powershell:
 
 ```powershell
 ./vmrcli.exe -D1 $(Get-Content .\example_commands.txt)
