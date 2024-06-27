@@ -10,7 +10,6 @@ long login(T_VBVMR_INTERFACE *iVMR, int kind)
     long v;
 
     rep = iVMR->VBVMR_Login();
-    Sleep(20);
     if (rep == 1)
     {
         run_voicemeeter(iVMR, kind);
@@ -34,12 +33,12 @@ long login(T_VBVMR_INTERFACE *iVMR, int kind)
         int timeout = 2;
 
         endwait = time(NULL) + timeout;
-        while (time(NULL) < endwait)
+        do
         {
+            Sleep(100);
             if ((rep = version(iVMR, &v)) == 0)
                 break;
-            Sleep(20);
-        }
+        } while (time(NULL) < endwait);
     }
     if (rep == 0)
     {
