@@ -175,17 +175,24 @@ void interactive(T_VBVMR_INTERFACE *vmr)
     char *p = input;
     char command[MAX_LINE];
     int i;
+    size_t len;
 
+    printf(">> ");
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
         input[strcspn(input, "\n")] = 0;
-        if (strlen(input) == 1 && (strncmp(input, "Q", 1) == 0 || strncmp(input, "q", 1) == 0))
+        len = strlen(input);
+        if (len == 1 && toupper(input[0]) == 'Q')
             break;
 
-        replace_multiple_space_with_one(input);
+        replace_multiple_space_with_one(input, len);
         while (*p)
         {
-            memset(command, '\0', sizeof(command));
+            if (isspace(*p))
+            {
+                p++;
+                continue;
+            }
             i = 0;
 
             while (!isspace(*p))
@@ -194,11 +201,11 @@ void interactive(T_VBVMR_INTERFACE *vmr)
 
             if (command[0] != '\0')
                 parse_command(vmr, command);
-
-            p++; /* shift to next input char */
+            memset(command, '\0', sizeof(command));
         }
 
         p = input; /* reset pointer */
+        printf(">> ");
     }
 }
 
@@ -237,7 +244,6 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
             puts(res.val.s);
             break;
         default:
-            log_error("Unexpected result type");
             break;
         }
     }
@@ -252,7 +258,7 @@ void get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res)
         if (get_parameter_string(vmr, command, res->val.s) != 0)
         {
             res->val.s[0] = 0;
-            log_error("Unknown parameter");
+            log_error("Unknown parameter '%s'", command);
         }
     }
 }

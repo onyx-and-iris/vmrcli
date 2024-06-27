@@ -1,10 +1,9 @@
-#include <string.h>
+#include <stddef.h>
 
-void replace_multiple_space_with_one(char *s)
+void replace_multiple_space_with_one(char *s, size_t len)
 {
     int j = 0;
     int count = 0;
-    int len = strlen(s);
 
     if (len == 1 && (s[0] == ' ' || s[0] == '\t'))
     {
@@ -33,6 +32,4 @@ void replace_multiple_space_with_one(char *s)
         }
     }
     s[j] = '\0';
-
-    return;
 }
