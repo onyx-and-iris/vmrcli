@@ -59,6 +59,14 @@ Scripts can be loaded from text files, for example in Powershell:
 ./vmrcli.exe -D1 $(Get-Content .\example_commands.txt)
 ```
 
+## `Build`
+
+Run the included `makefile` to build with [GNU Make](https://www.gnu.org/software/make/).
+
+By default the log.c module is built with coloured logging enabled. To disable this you can override the `LOG_USE_COLOR` variable, for example:
+
+`make LOG_USE_COLOR=no`
+
 ## `Official Documentation`
 
 - [Voicemeeter Remote C API](https://github.com/onyx-and-iris/Voicemeeter-SDK/blob/main/VoicemeeterRemoteAPI.pdf)
