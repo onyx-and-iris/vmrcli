@@ -205,7 +205,8 @@ void interactive(T_VBVMR_INTERFACE *vmr)
             memset(command, '\0', sizeof(command));
         }
 
-        p = input; /* reset pointer */
+        p = input;                          /* reset pointer */
+        memset(input, '\0', sizeof(input)); /* reset input buffer */
         printf(">> ");
     }
 }
