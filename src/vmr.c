@@ -35,9 +35,9 @@ long login(T_VBVMR_INTERFACE *iVMR, int kind)
         endwait = time(NULL) + timeout;
         do
         {
-            Sleep(100);
             if ((rep = version(iVMR, &v)) == 0)
                 break;
+            Sleep(50);
         } while (time(NULL) < endwait);
     }
     if (rep == 0)
