@@ -69,10 +69,9 @@ int main(int argc, char *argv[])
             }
             else
             {
-                fputs(
+                log_error(
                     "-D arg out of range, expected value from 0 up to 5\n"
-                    "Log level will default to LOG_WARN (3).\n",
-                    stderr);
+                    "Log level will default to LOG_WARN (3).\n");
             }
             break;
         default:
@@ -138,7 +137,7 @@ int set_kind(char *kval)
     }
     else
     {
-        fprintf(stderr, "Unknown Voicemeeter kind '%s'\n", kval);
+        log_error("Unknown Voicemeeter kind '%s'\n", kval);
         exit(EXIT_FAILURE);
     }
 }
@@ -150,11 +149,11 @@ int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind)
     {
         if (rep == -100)
         {
-            fputs("Voicemeeter is not installed", stderr);
+            log_error("Voicemeeter is not installed");
         }
         else
         {
-            fprintf(stderr, "Error loading Voicemeeter dll with code %d\n", rep);
+            log_error("Error loading Voicemeeter dll with code %d\n", rep);
         }
         return rep;
     }
@@ -162,7 +161,7 @@ int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind)
     rep = login(vmr, kind);
     if (rep != 0)
     {
-        fputs("Error logging into Voicemeeter", stderr);
+        log_error("Error logging into Voicemeeter");
         return rep;
     }
 
@@ -232,7 +231,7 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
             puts(res.val.s);
             break;
         default:
-            fputs("Unexpected result type", stderr);
+            log_error("Unexpected result type");
             break;
         }
     }
@@ -247,7 +246,7 @@ struct result *get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res)
         if (get_parameter_string(vmr, command, res->val.s) != 0)
         {
             res->val.s[0] = 0;
-            fputs("Unknown parameter", stderr);
+            log_error("Unknown parameter");
         }
     }
 
