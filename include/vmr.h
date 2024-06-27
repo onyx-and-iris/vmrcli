@@ -1,8 +1,8 @@
-#include <stdbool.h>
-#include "voicemeeterRemote.h"
-
 #ifndef __VMR_H__
 #define __VMR_H__
+
+#include <stdbool.h>
+#include "voicemeeterRemote.h"
 
 enum kind
 {
