@@ -21,7 +21,7 @@ struct result
     union val
     {
         float f;
-        char s[MAX_LINE];
+        wchar_t s[MAX_LINE];
     } val;
 };
 
@@ -243,7 +243,7 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
             printf("%.1f\n", res.val.f);
             break;
         case STRING_T:
-            puts(res.val.s);
+            printf("%ls\n", res.val.s);
             break;
         default:
             break;

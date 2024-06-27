@@ -96,10 +96,10 @@ long get_parameter_float(T_VBVMR_INTERFACE *vmr, char *param, float *f)
     return vmr->VBVMR_GetParameterFloat(param, f);
 }
 
-long get_parameter_string(T_VBVMR_INTERFACE *vmr, char *param, char *s)
+long get_parameter_string(T_VBVMR_INTERFACE *vmr, char *param, unsigned short *s)
 {
-    log_trace("VBVMR_GetParameterStringA(%s, <char> *s)", param, s);
-    return vmr->VBVMR_GetParameterStringA(param, s);
+    log_trace("VBVMR_GetParameterStringW(%s, <unsigned short> *s)", param, s);
+    return vmr->VBVMR_GetParameterStringW(param, s);
 }
 
 long set_parameter_float(T_VBVMR_INTERFACE *vmr, char *param, float val)
