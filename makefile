@@ -9,7 +9,12 @@ EXE := $(BIN_DIR)/$(program).exe
 SRC := $(wildcard $(SRC_DIR)/*.c)
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-CPPFLAGS := -Iinclude -MMD -MP
+LOG_USE_COLOR ?= yes
+ifeq ($(LOG_USE_COLOR), yes)
+	CPPFLAGS := -Iinclude -MMD -MP -DLOG_USE_COLOR
+else
+	CPPFLAGS := -Iinclude -MMD -MP
+endif
 CFLAGS = -O -Wall -W -pedantic -ansi -std=c99
 LDFLAGS  := -Llib
 LDLIBS   := -lm
