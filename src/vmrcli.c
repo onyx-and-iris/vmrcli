@@ -5,6 +5,7 @@
 #include "cdll.h"
 #include "vmr.h"
 #include "log.h"
+#include "util.h"
 
 #define MAX_LINE 512
 
@@ -172,6 +173,8 @@ void interactive(T_VBVMR_INTERFACE *vmr)
 {
     char input[MAX_LINE];
     char *p = input;
+    char command[MAX_LINE];
+    int i;
 
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
@@ -179,17 +182,20 @@ void interactive(T_VBVMR_INTERFACE *vmr)
         if (strlen(input) == 1 && (strncmp(input, "Q", 1) == 0 || strncmp(input, "q", 1) == 0))
             break;
 
+        replace_multiple_space_with_one(input);
         while (*p)
         {
-            char command[MAX_LINE];
-            int i = 0;
+            memset(command, '\0', sizeof(command));
+            i = 0;
 
             while (!isspace(*p))
                 command[i++] = *p++;
             command[i] = '\0';
-            p++; /* shift to next char */
 
-            parse_command(vmr, command);
+            if (command[0] != '\0')
+                parse_command(vmr, command);
+
+            p++;
         }
 
         p = input; /* reset pointer */
