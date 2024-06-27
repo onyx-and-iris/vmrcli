@@ -42,10 +42,10 @@ int main(int argc, char *argv[])
     if (argc == 1)
     {
         help();
-        return EXIT_SUCCESS;
+        exit(EXIT_SUCCESS);
     }
 
-    log_set_level(LOG_INFO);
+    log_set_level(LOG_WARN);
 
     while ((opt = getopt(argc, argv, "k:ihD:")) != -1)
     {
@@ -62,9 +62,17 @@ int main(int argc, char *argv[])
             help();
             exit(EXIT_SUCCESS);
         case 'D':
-            if ((dvalue = atoi(optarg)) && dvalue >= LOG_TRACE && dvalue <= LOG_FATAL)
+            dvalue = atoi(optarg);
+            if (dvalue >= LOG_TRACE && dvalue <= LOG_FATAL)
             {
                 log_set_level(dvalue);
+            }
+            else
+            {
+                fputs(
+                    "-D arg out of range, expected value from 0 up to 5\n"
+                    "Log level will default to LOG_WARN (3).\n",
+                    stderr);
             }
             break;
         default:
@@ -224,7 +232,7 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
             puts(res.val.s);
             break;
         default:
-            fputs("Unknown result...", stderr);
+            fputs("Unexpected result type", stderr);
             break;
         }
     }
