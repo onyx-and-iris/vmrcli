@@ -16,7 +16,7 @@
 
 Where:
 
-- `i`: Enable interactive mode. If set any api commands passed will be ignored.
+- `i`: Enable interactive mode. If set, any api commands passed on the command line will be ignored.
 - `k`: The kind of Voicemeeter (basic, banana or potato). Use this to launch the GUI.
 - `D`: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL
 
@@ -35,6 +35,21 @@ Launch basic GUI, set log level to INFO, Toggle Strip 0 Mute, then print its new
 Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then print Strip 2 label
 
 `./vmrcli.exe -kbanana -D1 strip[0].label=podmic strip[2].label`
+
+## `Interactive Mode`
+
+Running the following command in Powershell:
+
+`./vmrcli.exe -i`
+
+Will open an interactive prompt:
+
+```powershell
+Interactive mode enabled. Enter 'Q' to exit.
+>>
+```
+
+API commands follow the same rules as listed above. Entering `Q` or `q` will exit the program.
 
 ## `Script files`
 
