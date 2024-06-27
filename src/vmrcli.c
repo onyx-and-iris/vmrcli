@@ -195,7 +195,7 @@ void interactive(T_VBVMR_INTERFACE *vmr)
             if (command[0] != '\0')
                 parse_command(vmr, command);
 
-            p++;
+            p++; /* shift to next input char */
         }
 
         p = input; /* reset pointer */
