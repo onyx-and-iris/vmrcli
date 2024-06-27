@@ -75,12 +75,13 @@ long run_voicemeeter(T_VBVMR_INTERFACE *iVMR, int kind)
 
 long type(T_VBVMR_INTERFACE *iVMR, long *type)
 {
+    log_trace("VBVMR_GetVoicemeeterType(<long> *t)");
     return iVMR->VBVMR_GetVoicemeeterType(type);
 }
 
 long version(T_VBVMR_INTERFACE *iVMR, long *version)
 {
-    log_trace("VBVMR_GetVoicemeeterType(<long> *v)");
+    log_trace("VBVMR_GetVoicemeeterVersion(<long> *v)");
     return iVMR->VBVMR_GetVoicemeeterVersion(version);
 }
 
@@ -104,7 +105,7 @@ long get_parameter_string(T_VBVMR_INTERFACE *iVMR, char *param, char *s)
 
 long set_parameter_float(T_VBVMR_INTERFACE *iVMR, char *param, float val)
 {
-    log_trace("VBVMR_SetParameterFloat(%s, %.2f)", param, val);
+    log_trace("VBVMR_SetParameterFloat(%s, %.1f)", param, val);
     return iVMR->VBVMR_SetParameterFloat(param, val);
 }
 
