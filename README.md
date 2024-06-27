@@ -61,7 +61,7 @@ Scripts can be loaded from text files, for example in Powershell:
 
 ## `Build`
 
-Run the included `makefile` to build with [GNU Make](https://www.gnu.org/software/make/).
+Run the included `makefile` with [GNU Make](https://www.gnu.org/software/make/).
 
 By default the log.c module is built with coloured logging enabled. To disable this you can override the `LOG_USE_COLOR` variable, for example:
 
