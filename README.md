@@ -12,10 +12,13 @@
 
 ## `Use`
 
-`./vmrcli.exe [-i] [-k] [-D] <api commands>`
+```powershell
+./vmrcli.exe [-h] [-i] [-k] [-D] <api commands>
+```
 
 Where:
 
+- `h`: Prints the help dialogue.
 - `i`: Enable interactive mode. If set, any api commands passed on the command line will be ignored.
 - `k`: The kind of Voicemeeter (basic, banana or potato). Use this to launch the GUI.
 - `D`: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL
@@ -30,17 +33,23 @@ Examples:
 
 Launch basic GUI, set log level to INFO, Toggle Strip 0 Mute, then print its new value
 
-`./vmrcli.exe -kbasic -D2 !strip[0].mute strip[0].mute`
+```powershell
+./vmrcli.exe -kbasic -D2 !strip[0].mute strip[0].mute
+```
 
 Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then print Strip 2 label
 
-`./vmrcli.exe -kbanana -D1 strip[0].label=podmic strip[2].label`
+```powershell
+./vmrcli.exe -kbanana -D1 strip[0].label=podmic strip[2].label
+```
 
 ## `Interactive Mode`
 
 Running the following command in Powershell:
 
-`./vmrcli.exe -i`
+```powershell
+./vmrcli.exe -i
+```
 
 Will open an interactive prompt:
 

@@ -112,8 +112,9 @@ int main(int argc, char *argv[])
 void help()
 {
     puts(
-        "Usage: ./vmrcli.exe [-i] [-k] [-D] <api commands>\n"
+        "Usage: ./vmrcli.exe [-h] [-i] [-k] [-D] <api commands>\n"
         "Where: \n"
+        "\th: Prints the help dialogue\n"
         "\ti: Enable interactive mode\n"
         "\tk: The kind of Voicemeeter (basic, banana, potato)\n"
         "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL");
