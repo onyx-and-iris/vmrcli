@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include "cdll.h"
+#include "util.h"
 
 /*******************************************************************************/
 /**                           GET VOICEMEETER DIRECTORY                       **/
@@ -11,18 +12,6 @@
 #ifndef KEY_WOW64_32KEY
 #define KEY_WOW64_32KEY 0x0200
 #endif
-
-void remove_name_in_path(char *szPath)
-{
-    char *p = szPath;
-
-    while (*p++)
-        ;
-    while (p > szPath && *p != '\\')
-        p--;
-    if (*p == '\\')
-        *p = '\0';
-}
 
 bool __cdecl registry_get_voicemeeter_folder(char *szDir)
 {

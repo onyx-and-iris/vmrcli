@@ -3,6 +3,9 @@
 #include <time.h>
 #include "vmr.h"
 #include "log.h"
+#include "util.h"
+
+#define VERSION_STR_LEN 128
 
 long login(T_VBVMR_INTERFACE *vmr, int kind)
 {
@@ -43,13 +46,10 @@ long login(T_VBVMR_INTERFACE *vmr, int kind)
     if (rep == 0)
     {
         version(vmr, &v);
-        long v1 = (v & 0xFF000000) >> 24,
-             v2 = (v & 0x00FF0000) >> 16,
-             v3 = (v & 0x0000FF00) >> 8,
-             v4 = (v & 0x000000FF);
-        char version_s[128];
-        sprintf(version_s, "%i.%i.%i.%i", (int)v1, (int)v2, (int)v3, (int)v4);
-        log_info("Successfully logged into the Voicemeeter API v%s", version_s);
+        char version_s[VERSION_STR_LEN];
+        log_info(
+            "Successfully logged into the Voicemeeter API v%s",
+            version_as_string(version_s, v, VERSION_STR_LEN));
         clear_dirty(vmr);
     }
     return rep;
