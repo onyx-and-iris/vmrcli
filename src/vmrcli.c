@@ -171,9 +171,8 @@ int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind)
 
 void interactive(T_VBVMR_INTERFACE *vmr)
 {
-    char input[MAX_LINE];
+    char input[MAX_LINE], command[MAX_LINE];
     char *p = input;
-    char command[MAX_LINE];
     int i;
     size_t len;
 
@@ -199,14 +198,15 @@ void interactive(T_VBVMR_INTERFACE *vmr)
             while (!isspace(*p))
                 command[i++] = *p++;
             command[i] = '\0';
+            p++; /* shift to next char */
 
             if (command[0] != '\0')
                 parse_command(vmr, command);
-            memset(command, '\0', sizeof(command));
+            memset(command, '\0', MAX_LINE);
         }
 
-        p = input;                          /* reset pointer */
-        memset(input, '\0', sizeof(input)); /* reset input buffer */
+        p = input;                     /* reset pointer */
+        memset(input, '\0', MAX_LINE); /* reset input buffer */
         printf(">> ");
     }
 }
