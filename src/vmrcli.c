@@ -192,10 +192,10 @@ void interactive(T_VBVMR_INTERFACE *vmr)
                 p++;
                 continue;
             }
-            i = 0;
             log_trace("commands still in buffer: %s", p);
 
-            while (!isspace(*p))
+            i = 0;
+            while (*p && !isspace(*p))
                 command[i++] = *p++;
             command[i] = '\0';
             p++; /* shift to next char */
