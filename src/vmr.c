@@ -18,7 +18,9 @@ long login(T_VBVMR_INTERFACE *vmr, int kind)
     {
         run_voicemeeter(vmr, kind);
         char kind_s[KIND_STR_LEN];
-        log_info("Launching Voicemeeter %s GUI", kind_as_string(kind_s, kind, KIND_STR_LEN));
+        log_info(
+            "Launching Voicemeeter %s GUI",
+            kind_as_string(kind_s, kind, KIND_STR_LEN));
 
         time_t endwait;
         int timeout = 2;
