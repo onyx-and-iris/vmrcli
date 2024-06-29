@@ -6,6 +6,7 @@
 #include "util.h"
 
 #define VERSION_STR_LEN 128
+#define KIND_STR_LEN 64
 
 long login(T_VBVMR_INTERFACE *vmr, int kind)
 {
@@ -16,21 +17,8 @@ long login(T_VBVMR_INTERFACE *vmr, int kind)
     if (rep == 1)
     {
         run_voicemeeter(vmr, kind);
-        switch (kind)
-        {
-        case BASIC:
-            log_info("Launching Voicemeeter Basic GUI");
-            break;
-        case BANANA:
-            log_info("Launching Voicemeeter Banana GUI");
-            break;
-        case POTATO:
-            log_info("Launching Voicemeeter Potato GUI");
-            break;
-        case POTATOX64:
-            log_info("Launching Voicemeeter Potato x64 GUI");
-            break;
-        }
+        char kind_s[KIND_STR_LEN];
+        log_info("Launching Voicemeeter %s GUI", kind_as_string(kind_s, kind, KIND_STR_LEN));
 
         time_t endwait;
         int timeout = 2;

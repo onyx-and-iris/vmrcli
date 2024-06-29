@@ -9,7 +9,9 @@ enum kind
     BASIC = 1,
     BANANA,
     POTATO,
-    POTATOX64 = 6
+    BASICX64,
+    BANANAX64,
+    POTATOX64,
 };
 
 long login(T_VBVMR_INTERFACE *iVMR, int kind);

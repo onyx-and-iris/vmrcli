@@ -26,7 +26,7 @@ struct result
 };
 
 void help(void);
-int set_kind(char *kval);
+enum kind set_kind(char *kval);
 int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind);
 void interactive(T_VBVMR_INTERFACE *vmr);
 void parse_command(T_VBVMR_INTERFACE *vmr, char *command);
@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     int opt;
     char *kvalue = "";
     int dvalue;
-    int kind = BANANA;
+    enum kind kind = BANANAX64;
 
     if (argc == 1)
     {
@@ -109,6 +109,10 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
 }
 
+/**
+ * @brief prints the help dialogue
+ *
+ */
 void help()
 {
     puts(
@@ -120,15 +124,27 @@ void help()
         "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL");
 }
 
-int set_kind(char *kval)
+/**
+ * @brief Set the kind object
+ *
+ * @param kval
+ * @return enum kind
+ */
+enum kind set_kind(char *kval)
 {
     if (strcmp(kval, "basic") == 0)
     {
-        return BASIC;
+        if (sizeof(void *) == 8)
+            return BASICX64;
+        else
+            return BASIC;
     }
     else if (strcmp(kval, "banana") == 0)
     {
-        return BANANA;
+        if (sizeof(void *) == 8)
+            return BANANAX64;
+        else
+            return BANANA;
     }
     else if (strcmp(kval, "potato") == 0)
     {
