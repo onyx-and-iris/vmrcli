@@ -215,7 +215,6 @@ void interactive(T_VBVMR_INTERFACE *vmr)
             while (*p && !isspace(*p))
                 command[i++] = *p++;
             command[i] = '\0';
-            p++; /* shift to next char */
 
             if (command[0] != '\0')
                 parse_command(vmr, command);
