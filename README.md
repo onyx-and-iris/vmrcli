@@ -1,4 +1,4 @@
-# VMRCLI Command Line Utility
+# Voicemeeter Remote Command Line Utility
 
 ## `Tested against`
 
