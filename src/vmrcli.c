@@ -215,7 +215,6 @@ void interactive(T_VBVMR_INTERFACE *vmr)
             while (*p && !isspace(*p))
                 command[i++] = *p++;
             command[i] = '\0';
-            p++; /* shift to next char */
 
             if (command[0] != '\0')
                 parse_command(vmr, command);
@@ -240,7 +239,10 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
         get(vmr, command, &res);
         if (res.type == FLOAT_T)
         {
-            set_parameter_float(vmr, command, 1 - res.val.f);
+            if (res.val.f == 1 || res.val.f == 0)
+                set_parameter_float(vmr, command, 1 - res.val.f);
+            else
+                log_warn("%s does not appear to be a boolean parameter", command);
         }
         return;
     }
