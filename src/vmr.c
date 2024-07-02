@@ -30,25 +30,25 @@ long login(T_VBVMR_INTERFACE *vmr, int kind)
         log_info(
             "Launching Voicemeeter %s GUI",
             kind_as_string(kind_s, kind, KIND_STR_LEN));
-
-        time_t endwait;
-        int timeout = 2;
-
-        endwait = time(NULL) + timeout;
-        do
-        {
-            if ((rep = version(vmr, &v)) == 0)
-                break;
-            Sleep(50);
-        } while (time(NULL) < endwait);
     }
+
+    int timeout = 2;
+    time_t start = time(NULL);
+    do
+    {
+        if ((rep = version(vmr, &v)) == 0)
+        {
+            char version_s[VERSION_STR_LEN];
+            log_info(
+                "Successfully logged into the Voicemeeter API v%s",
+                version_as_string(version_s, v, VERSION_STR_LEN));
+            break;
+        }
+        Sleep(50);
+    } while (time(NULL) < start + timeout);
+
     if (rep == 0)
     {
-        version(vmr, &v);
-        char version_s[VERSION_STR_LEN];
-        log_info(
-            "Successfully logged into the Voicemeeter API v%s",
-            version_as_string(version_s, v, VERSION_STR_LEN));
         clear_dirty(vmr);
     }
     return rep;
