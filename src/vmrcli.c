@@ -9,12 +9,21 @@
 
 #define MAX_LINE 512
 
+/**
+ * @brief An enum used to define the kind of value
+ * a 'get' call returns.
+ *
+ */
 enum
 {
     FLOAT_T,
     STRING_T,
 };
 
+/**
+ * @brief A struct holding the result of a get call.
+ *
+ */
 struct result
 {
     int type;
@@ -116,7 +125,7 @@ int main(int argc, char *argv[])
 }
 
 /**
- * @brief prints the help dialogue
+ * @brief prints the help message
  *
  */
 void help()
@@ -124,7 +133,7 @@ void help()
     puts(
         "Usage: ./vmrcli.exe [-h] [-i] [-k] [-D] [-v] <api commands>\n"
         "Where: \n"
-        "\th: Prints the help dialogue\n"
+        "\th: Prints the help message\n"
         "\ti: Enable interactive mode\n"
         "\tk: The kind of Voicemeeter (basic, banana, potato)\n"
         "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL\n"
@@ -167,6 +176,14 @@ enum kind set_kind(char *kval)
     }
 }
 
+/**
+ * @brief Defines the DLL interface as a struct.
+ * Logs into the API.
+ *
+ * @param vmr The API interface as a struct
+ * @param kind
+ * @return int
+ */
 int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind)
 {
     int rep = initialize_dll_interfaces(vmr);
@@ -193,6 +210,13 @@ int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind)
     return 0;
 }
 
+/**
+ * @brief Continuously read lines from stdin.
+ * Break if 'Q' is entered on the interactive prompt.
+ * Each line is passed to parse_input()
+ *
+ * @param vmr The API interface as a struct
+ */
 void interactive(T_VBVMR_INTERFACE *vmr)
 {
     char input[MAX_LINE];
@@ -213,6 +237,14 @@ void interactive(T_VBVMR_INTERFACE *vmr)
     }
 }
 
+/**
+ * @brief Walks through each line split by a space delimiter.
+ * Each token is passed to parse_command()
+ *
+ * @param vmr The API interface as a struct
+ * @param input Each input line, from stdin or CLI args
+ * @param len The length of the input line
+ */
 void parse_input(T_VBVMR_INTERFACE *vmr, char *input, int len)
 {
     char *token;
@@ -226,6 +258,14 @@ void parse_input(T_VBVMR_INTERFACE *vmr, char *input, int len)
     }
 }
 
+/**
+ * @brief Execute each command according to type.
+ * See command type definitions in:
+ * https://github.com/onyx-and-iris/vmrcli?tab=readme-ov-file#api-commands
+ *
+ * @param vmr The API interface as a struct
+ * @param command Each token from the input line as its own command string
+ */
 void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
 {
     log_debug("Parsing %s", command);
@@ -279,6 +319,13 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
     }
 }
 
+/**
+ * @brief
+ *
+ * @param vmr The API interface as a struct
+ * @param command A parsed 'get' command as a string
+ * @param res A struct holding the result of the API call.
+ */
 void get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res)
 {
     clear_dirty(vmr);

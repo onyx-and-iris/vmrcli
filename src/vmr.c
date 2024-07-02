@@ -8,6 +8,15 @@
 #define VERSION_STR_LEN 128
 #define KIND_STR_LEN 64
 
+/**
+ * @brief Logs into the API.
+ * Tests for valid connection for up to 2 seconds.
+ * If successful initializes the dirty parameters.
+ *
+ * @param vmr
+ * @param kind
+ * @return long
+ */
 long login(T_VBVMR_INTERFACE *vmr, int kind)
 {
     int rep;
@@ -45,6 +54,13 @@ long login(T_VBVMR_INTERFACE *vmr, int kind)
     return rep;
 }
 
+/**
+ * @brief Logs out of the API giving a short wait to allow a
+ * final instruction to complete.
+ *
+ * @param vmr The API interface as a struct
+ * @return long VBVMR_Logout return value
+ */
 long logout(T_VBVMR_INTERFACE *vmr)
 {
     int rep;

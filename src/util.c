@@ -3,6 +3,11 @@
 #include "vmr.h"
 #include "util.h"
 
+/**
+ * @brief Removes the last part of a path
+ *
+ * @param szPath
+ */
 void remove_name_in_path(char *szPath)
 {
     char *p = szPath;
@@ -57,6 +62,14 @@ int replace_multiple_space_with_one(char *s, size_t len)
     return j;
 }
 
+/**
+ * @brief
+ *
+ * @param s Pointer to a character buffer
+ * @param kind The kind of Voicemeeter.
+ * @param n maximum number of characters to be written to the buffer
+ * @return char* The kind of Voicemeeter as a string
+ */
 char *kind_as_string(char *s, enum kind kind, int n)
 {
     char *kinds[] = {

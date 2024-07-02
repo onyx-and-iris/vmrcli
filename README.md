@@ -18,7 +18,7 @@
 
 Where:
 
-- `h`: Prints the help dialogue.
+- `h`: Prints the help message.
 - `i`: Enable interactive mode. If set, any api commands passed on the command line will be ignored.
 - `k`: The kind of Voicemeeter (basic, banana or potato). Use this to launch the GUI.
 - `D`: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL
