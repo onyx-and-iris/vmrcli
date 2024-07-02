@@ -12,6 +12,8 @@ enum kind
     BASICX64,
     BANANAX64,
     POTATOX64,
+    MACROBUTTONS = 11,
+    STREAMERVIEW
 };
 
 long login(T_VBVMR_INTERFACE *vmr, int kind);
