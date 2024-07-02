@@ -74,14 +74,19 @@ Multiple API commands can be in a single line but they should be space separated
 
 Run the included `makefile` with [GNU Make](https://www.gnu.org/software/make/).
 
-By default the log.c module is built with coloured logging enabled. To disable this you can override the `LOG_USE_COLOR` variable, for example:
+The binary in [Releases][releases] is compiled with coloured logging enabled. To disable this you can override the `LOG_USE_COLOR` variable, for example:
 
 `make LOG_USE_COLOR=no`
 
 ## `Official Documentation`
 
-- [Voicemeeter Remote C API](https://github.com/onyx-and-iris/Voicemeeter-SDK/blob/main/VoicemeeterRemoteAPI.pdf)
+- [Voicemeeter Remote C API][remoteapi-docs]
 
 ## `Special Thanks`
 
-- [rxi](https://github.com/rxi) for writing the [log.c](https://github.com/rxi/log.c) package
+- [rxi][rxi-user] for writing the [log.c][log-c] package
+
+[releases]: https://github.com/onyx-and-iris/vmrcli/releases
+[remoteapi-docs]: https://github.com/onyx-and-iris/Voicemeeter-SDK/blob/main/VoicemeeterRemoteAPI.pdf
+[rxi-user]: https://github.com/rxi
+[log-c]: https://github.com/rxi/log.c
