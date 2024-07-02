@@ -29,8 +29,11 @@ void help(void);
 enum kind set_kind(char *kval);
 int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind);
 void interactive(T_VBVMR_INTERFACE *vmr);
+void parse_input(T_VBVMR_INTERFACE *vmr, char *input, int len);
 void parse_command(T_VBVMR_INTERFACE *vmr, char *command);
 void get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res);
+
+bool vflag = false;
 
 int main(int argc, char *argv[])
 {
@@ -48,7 +51,7 @@ int main(int argc, char *argv[])
 
     log_set_level(LOG_WARN);
 
-    while ((opt = getopt(argc, argv, "k:ihD:")) != -1)
+    while ((opt = getopt(argc, argv, "k:ihD:v")) != -1)
     {
         switch (opt)
         {
@@ -75,6 +78,9 @@ int main(int argc, char *argv[])
                     "Log level will default to LOG_WARN (3).\n");
             }
             break;
+        case 'v':
+            vflag = true;
+            break;
         default:
             abort();
         }
@@ -98,7 +104,7 @@ int main(int argc, char *argv[])
     {
         for (int i = optind; i < argc; i++)
         {
-            parse_command(vmr, argv[i]);
+            parse_input(vmr, argv[i], strlen(argv[i]));
         }
     }
 
@@ -116,12 +122,13 @@ int main(int argc, char *argv[])
 void help()
 {
     puts(
-        "Usage: ./vmrcli.exe [-h] [-i] [-k] [-D] <api commands>\n"
+        "Usage: ./vmrcli.exe [-h] [-i] [-k] [-D] [-v] <api commands>\n"
         "Where: \n"
         "\th: Prints the help dialogue\n"
         "\ti: Enable interactive mode\n"
         "\tk: The kind of Voicemeeter (basic, banana, potato)\n"
-        "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL");
+        "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL"
+        "\tv: Enable extra console output (toggle, set messages)\n");
 }
 
 /**
@@ -188,9 +195,7 @@ int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind)
 
 void interactive(T_VBVMR_INTERFACE *vmr)
 {
-    char input[MAX_LINE], command[MAX_LINE];
-    char *p = input;
-    int i;
+    char input[MAX_LINE];
     size_t len;
 
     printf(">> ");
@@ -201,29 +206,23 @@ void interactive(T_VBVMR_INTERFACE *vmr)
         if (len == 1 && toupper(input[0]) == 'Q')
             break;
 
-        replace_multiple_space_with_one(input, len);
-        while (*p)
-        {
-            if (isspace(*p))
-            {
-                p++;
-                continue;
-            }
-            log_trace("commands still in buffer: %s", p);
+        parse_input(vmr, input, len);
 
-            i = 0;
-            while (*p && !isspace(*p))
-                command[i++] = *p++;
-            command[i] = '\0';
-
-            if (command[0] != '\0')
-                parse_command(vmr, command);
-            memset(command, '\0', MAX_LINE);
-        }
-
-        p = input;                     /* reset pointer */
         memset(input, '\0', MAX_LINE); /* reset input buffer */
         printf(">> ");
+    }
+}
+
+void parse_input(T_VBVMR_INTERFACE *vmr, char *input, int len)
+{
+    char *token;
+
+    replace_multiple_space_with_one(input, len);
+    token = strtok(input, " ");
+    while (token != NULL)
+    {
+        parse_command(vmr, token);
+        token = strtok(NULL, " ");
     }
 }
 
@@ -240,7 +239,13 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
         if (res.type == FLOAT_T)
         {
             if (res.val.f == 1 || res.val.f == 0)
+            {
                 set_parameter_float(vmr, command, 1 - res.val.f);
+                if (vflag)
+                {
+                    printf("Toggling %s\n", command);
+                }
+            }
             else
                 log_warn("%s does not appear to be a boolean parameter", command);
         }
@@ -250,6 +255,10 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
     if (strchr(command, '=') != NULL) /* set */
     {
         set_parameters(vmr, command);
+        if (vflag)
+        {
+            printf("Setting %s\n", command);
+        }
     }
     else /* get */
     {
@@ -259,10 +268,10 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
         switch (res.type)
         {
         case FLOAT_T:
-            printf("%.1f\n", res.val.f);
+            printf("%s: %.1f\n", command, res.val.f);
             break;
         case STRING_T:
-            printf("%ls\n", res.val.s);
+            printf("%s: %ls\n", command, res.val.s);
             break;
         default:
             break;
