@@ -127,8 +127,8 @@ void help()
         "\th: Prints the help dialogue\n"
         "\ti: Enable interactive mode\n"
         "\tk: The kind of Voicemeeter (basic, banana, potato)\n"
-        "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL"
-        "\tv: Enable extra console output (toggle, set messages)\n");
+        "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL\n"
+        "\tv: Enable extra console output (toggle, set messages)");
 }
 
 /**
