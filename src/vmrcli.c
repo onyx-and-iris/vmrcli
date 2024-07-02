@@ -159,7 +159,7 @@ void help()
         "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL\n"
         "\tv: Enable extra console output (toggle, set messages)\n"
         "\tm: Launch the MacroButtons application\n"
-        "\tm: Launch the StreamerView application");
+        "\ts: Launch the StreamerView application");
 }
 
 /**
