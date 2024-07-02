@@ -32,10 +32,10 @@ Where:
 
 Examples:
 
-Launch basic GUI, set log level to INFO, Toggle Strip 0 Mute, then print its new value
+Launch basic GUI, set log level to INFO, Toggle Strip 0 Mute, print its new value, then decrease Bus 0 Gain by 3.8
 
 ```powershell
-./vmrcli.exe -kbasic -D2 !strip[0].mute strip[0].mute
+./vmrcli.exe -kbasic -D2 !strip[0].mute strip[0].mute bus[0].gain-=3.8
 ```
 
 Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then print Strip 2 label
