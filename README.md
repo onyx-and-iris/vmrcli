@@ -27,7 +27,7 @@ Where:
 ## `API Commands`
 
 - Commands starting with `!` will be toggled, use it with boolean parameters.
-- Commands containing `=` will set a value.
+- Commands containing `=` will set a value. (use `+=` and `-=` to increment/decrement)
 - All other commands with get a value.
 
 Examples:
