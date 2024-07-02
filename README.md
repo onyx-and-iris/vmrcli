@@ -68,6 +68,8 @@ Scripts can be loaded from text files, for example in Powershell:
 ./vmrcli.exe -D1 $(Get-Content .\example_commands.txt)
 ```
 
+Multiple API commands can be in a single line but they should be space separated.
+
 ## `Build`
 
 Run the included `makefile` with [GNU Make](https://www.gnu.org/software/make/).
