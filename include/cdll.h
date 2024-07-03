@@ -1,7 +1,6 @@
 #ifndef __CDLL_H__
 #define __CDLL_H__
 
-#include <windows.h>
 #include "VoicemeeterRemote.h"
 
 long initialize_dll_interfaces(T_VBVMR_INTERFACE *iVMR);

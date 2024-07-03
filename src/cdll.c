@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdio.h>
+#include <windows.h>
 #include "cdll.h"
 #include "util.h"
 
