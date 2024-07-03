@@ -36,7 +36,7 @@ struct result
 
 void help(void);
 enum kind set_kind(char *kval);
-int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind);
+int init_voicemeeter(T_VBVMR_INTERFACE *vmr, enum kind kind);
 void interactive(T_VBVMR_INTERFACE *vmr);
 void parse_input(T_VBVMR_INTERFACE *vmr, char *input, int len);
 void parse_command(T_VBVMR_INTERFACE *vmr, char *command);
@@ -46,11 +46,10 @@ bool vflag = false;
 
 int main(int argc, char *argv[])
 {
-    bool iflag = false;
-    bool mflag = false;
-    bool sflag = false;
+    bool iflag = false,
+         mflag = false,
+         sflag = false;
     int opt;
-    char *kvalue = "";
     int dvalue;
     enum kind kind = BANANAX64;
 
@@ -70,8 +69,12 @@ int main(int argc, char *argv[])
             help();
             exit(EXIT_SUCCESS);
         case 'k':
-            kvalue = optarg;
-            kind = set_kind(kvalue);
+            kind = set_kind(optarg);
+            if (kind == UNKNOWN)
+            {
+                log_fatal("Unknown Voicemeeter kind '%s'", optarg);
+                exit(EXIT_FAILURE);
+            }
             break;
         case 'm':
             mflag = true;
@@ -90,7 +93,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                log_error(
+                log_warn(
                     "-D arg out of range, expected value from 0 up to 5\n"
                     "Log level will default to LOG_WARN (3).\n");
             }
@@ -193,8 +196,7 @@ enum kind set_kind(char *kval)
     }
     else
     {
-        log_error("Unknown Voicemeeter kind '%s'\n", kval);
-        exit(EXIT_FAILURE);
+        return UNKNOWN;
     }
 }
 
@@ -206,18 +208,18 @@ enum kind set_kind(char *kval)
  * @param kind
  * @return int
  */
-int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind)
+int init_voicemeeter(T_VBVMR_INTERFACE *vmr, enum kind kind)
 {
     int rep = initialize_dll_interfaces(vmr);
     if (rep < 0)
     {
         if (rep == -100)
         {
-            log_error("Voicemeeter is not installed");
+            log_fatal("Voicemeeter is not installed");
         }
         else
         {
-            log_error("Error loading Voicemeeter dll with code %d\n", rep);
+            log_fatal("Error loading Voicemeeter dll with code %d\n", rep);
         }
         return rep;
     }
@@ -225,7 +227,7 @@ int init_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind)
     rep = login(vmr, kind);
     if (rep != 0)
     {
-        log_error("Error logging into Voicemeeter");
+        log_fatal("Error logging into Voicemeeter");
         return rep;
     }
 

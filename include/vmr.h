@@ -6,6 +6,7 @@
 
 enum kind
 {
+    UNKNOWN = -1,
     BASIC = 1,
     BANANA,
     POTATO,
