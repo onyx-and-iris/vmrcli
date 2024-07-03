@@ -70,7 +70,7 @@ int replace_multiple_space_with_one(char *s, size_t len)
  * @param n maximum number of characters to be written to the buffer
  * @return char* The kind of Voicemeeter as a string
  */
-char *kind_as_string(char *s, enum kind kind, int n)
+char *kind_as_string(char *s, int kind, int n)
 {
     char *kinds[] = {
         "Basic",
