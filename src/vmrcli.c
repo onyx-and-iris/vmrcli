@@ -36,15 +36,16 @@ struct result
     } val;
 };
 
+static T_VBVMR_INTERFACE iVMR;
+bool vflag = false;
+
 void help(void);
 enum kind set_kind(char *kval);
-int init_voicemeeter(T_VBVMR_INTERFACE *vmr, enum kind kind);
-void interactive(T_VBVMR_INTERFACE *vmr);
-void parse_input(T_VBVMR_INTERFACE *vmr, char *input, int len);
-void parse_command(T_VBVMR_INTERFACE *vmr, char *command);
-void get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res);
-
-bool vflag = false;
+int init_voicemeeter(PT_VMR vmr, enum kind kind);
+void interactive(PT_VMR vmr);
+void parse_input(PT_VMR vmr, char *input, int len);
+void parse_command(PT_VMR vmr, char *command);
+void get(PT_VMR vmr, char *command, struct result *res);
 
 int main(int argc, char *argv[])
 {
@@ -108,8 +109,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    T_VBVMR_INTERFACE iVMR;
-    T_VBVMR_INTERFACE *vmr = &iVMR;
+    PT_VMR vmr = &iVMR;
 
     int rep = init_voicemeeter(vmr, kind);
     if (rep != 0)
@@ -210,7 +210,7 @@ enum kind set_kind(char *kval)
  * @param kind
  * @return int
  */
-int init_voicemeeter(T_VBVMR_INTERFACE *vmr, enum kind kind)
+int init_voicemeeter(PT_VMR vmr, enum kind kind)
 {
     int rep = initialize_dll_interfaces(vmr);
     if (rep < 0)
@@ -243,7 +243,7 @@ int init_voicemeeter(T_VBVMR_INTERFACE *vmr, enum kind kind)
  *
  * @param vmr The API interface as a struct
  */
-void interactive(T_VBVMR_INTERFACE *vmr)
+void interactive(PT_VMR vmr)
 {
     char input[MAX_LINE];
     size_t len;
@@ -271,7 +271,7 @@ void interactive(T_VBVMR_INTERFACE *vmr)
  * @param input Each input line, from stdin or CLI args
  * @param len The length of the input line
  */
-void parse_input(T_VBVMR_INTERFACE *vmr, char *input, int len)
+void parse_input(PT_VMR vmr, char *input, int len)
 {
     char *token;
 
@@ -292,7 +292,7 @@ void parse_input(T_VBVMR_INTERFACE *vmr, char *input, int len)
  * @param vmr The API interface as a struct
  * @param command Each token from the input line as its own command string
  */
-void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
+void parse_command(PT_VMR vmr, char *command)
 {
     log_debug("Parsing %s", command);
 
@@ -352,7 +352,7 @@ void parse_command(T_VBVMR_INTERFACE *vmr, char *command)
  * @param command A parsed 'get' command as a string
  * @param res A struct holding the result of the API call.
  */
-void get(T_VBVMR_INTERFACE *vmr, char *command, struct result *res)
+void get(PT_VMR vmr, char *command, struct result *res)
 {
     clear_dirty(vmr);
     if (get_parameter_float(vmr, command, &res->val.f) != 0)

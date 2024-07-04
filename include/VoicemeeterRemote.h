@@ -763,7 +763,7 @@ extern "C"
 		T_VBVMR_MacroButton_GetStatus VBVMR_MacroButton_GetStatus;
 		T_VBVMR_MacroButton_SetStatus VBVMR_MacroButton_SetStatus;
 
-	} T_VBVMR_INTERFACE, *PT_VBVMR_INTERFACE, *LPT_VBVMR_INTERFACE;
+	} T_VBVMR_INTERFACE, *PT_VBVMR_INTERFACE, *LPT_VBVMR_INTERFACE, *PT_VMR;
 
 #ifdef VBUSE_LOCALLIB
 	// internal used (not public)

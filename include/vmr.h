@@ -17,23 +17,23 @@ enum kind
     STREAMERVIEW
 };
 
-long login(T_VBVMR_INTERFACE *vmr, int kind);
-long logout(T_VBVMR_INTERFACE *vmr);
-long run_voicemeeter(T_VBVMR_INTERFACE *vmr, int kind);
-long type(T_VBVMR_INTERFACE *vmr, long *type);
-long version(T_VBVMR_INTERFACE *vmr, long *version);
+long login(PT_VMR vmr, int kind);
+long logout(PT_VMR vmr);
+long run_voicemeeter(PT_VMR vmr, int kind);
+long type(PT_VMR vmr, long *type);
+long version(PT_VMR vmr, long *version);
 
-bool is_pdirty(T_VBVMR_INTERFACE *vmr);
-long get_parameter_float(T_VBVMR_INTERFACE *vmr, char *param, float *f);
-long get_parameter_string(T_VBVMR_INTERFACE *vmr, char *param, unsigned short *s);
-long set_parameter_float(T_VBVMR_INTERFACE *vmr, char *param, float val);
-long set_parameter_string(T_VBVMR_INTERFACE *vmr, char *param, char *s);
-long set_parameters(T_VBVMR_INTERFACE *vmr, char *command);
+bool is_pdirty(PT_VMR vmr);
+long get_parameter_float(PT_VMR vmr, char *param, float *f);
+long get_parameter_string(PT_VMR vmr, char *param, unsigned short *s);
+long set_parameter_float(PT_VMR vmr, char *param, float val);
+long set_parameter_string(PT_VMR vmr, char *param, char *s);
+long set_parameters(PT_VMR vmr, char *command);
 
-bool is_mdirty(T_VBVMR_INTERFACE *vmr);
-long macrobutton_getstatus(T_VBVMR_INTERFACE *vmr, long n, float *val, long mode);
-long macrobutton_setstatus(T_VBVMR_INTERFACE *vmr, long n, float val, long mode);
+bool is_mdirty(PT_VMR vmr);
+long macrobutton_getstatus(PT_VMR vmr, long n, float *val, long mode);
+long macrobutton_setstatus(PT_VMR vmr, long n, float val, long mode);
 
-void clear_dirty(T_VBVMR_INTERFACE *vmr);
+void clear_dirty(PT_VMR vmr);
 
 #endif /* __VMR_H__ */
