@@ -109,6 +109,10 @@ long initialize_dll_interfaces(PT_VMR vmr)
     vmr->VBVMR_Input_GetDeviceDescA = (T_VBVMR_Input_GetDeviceDescA)GetProcAddress(G_H_Module, "VBVMR_Input_GetDeviceDescA");
     vmr->VBVMR_Input_GetDeviceDescW = (T_VBVMR_Input_GetDeviceDescW)GetProcAddress(G_H_Module, "VBVMR_Input_GetDeviceDescW");
 
+    vmr->VBVMR_MacroButton_IsDirty = (T_VBVMR_MacroButton_IsDirty)GetProcAddress(G_H_Module, "VBVMR_MacroButton_IsDirty");
+    vmr->VBVMR_MacroButton_GetStatus = (T_VBVMR_MacroButton_GetStatus)GetProcAddress(G_H_Module, "VBVMR_MacroButton_GetStatus");
+    vmr->VBVMR_MacroButton_SetStatus = (T_VBVMR_MacroButton_SetStatus)GetProcAddress(G_H_Module, "VBVMR_MacroButton_SetStatus");
+
     // check pointers are valid
     if (vmr->VBVMR_Login == NULL)
         return -1;
@@ -155,6 +159,13 @@ long initialize_dll_interfaces(PT_VMR vmr)
         return -34;
     if (vmr->VBVMR_Input_GetDeviceDescW == NULL)
         return -35;
+
+    if (vmr->VBVMR_MacroButton_IsDirty == NULL)
+        return -36;
+    if (vmr->VBVMR_MacroButton_GetStatus == NULL)
+        return -37;
+    if (vmr->VBVMR_MacroButton_SetStatus == NULL)
+        return -38;
 
     return 0;
 }

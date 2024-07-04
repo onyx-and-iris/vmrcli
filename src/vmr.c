@@ -22,6 +22,7 @@ long login(PT_VMR vmr, int kind)
     int rep;
     long v;
 
+    log_trace("VBVMR_Login()");
     rep = vmr->VBVMR_Login();
     if (rep == 1)
     {
@@ -66,6 +67,7 @@ long logout(PT_VMR vmr)
     int rep;
 
     Sleep(20); /* give time for last command */
+    log_trace("VBVMR_Logout()");
     rep = vmr->VBVMR_Logout();
     if (rep == 0)
         log_info("Successfully logged out of the Voicemeeter API");
@@ -128,16 +130,19 @@ long set_parameters(PT_VMR vmr, char *command)
 
 bool is_mdirty(PT_VMR vmr)
 {
+    log_trace("VBVMR_MacroButton_IsDirty()");
     return vmr->VBVMR_MacroButton_IsDirty() == 1;
 }
 
 long macrobutton_getstatus(PT_VMR vmr, long n, float *val, long mode)
 {
+    log_trace("VBVMR_MacroButton_GetStatus(%ld, <float> *v, %ld)", n, mode);
     return vmr->VBVMR_MacroButton_GetStatus(n, val, mode);
 }
 
 long macrobutton_setstatus(PT_VMR vmr, long n, float val, long mode)
 {
+    log_trace("VBVMR_MacroButton_SetStatus(%ld, %d, %ld)", n, (int)val, mode);
     return vmr->VBVMR_MacroButton_SetStatus(n, val, mode);
 }
 
