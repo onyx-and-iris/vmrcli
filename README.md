@@ -13,7 +13,7 @@
 ## `Use`
 
 ```powershell
-./vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-p] [-m] [-s] <api commands>
+./vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>
 ```
 
 Where:
@@ -23,7 +23,7 @@ Where:
 - `k`: The kind of Voicemeeter (basic, banana or potato). Use this to launch the GUI.
 - `D`: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL
 - `v`: Enable extra console output (toggle, set messages)
-- `p`: Load a user configuration (given the file name or a full path)
+- `c`: Load a user configuration (given the file name or a full path)
 - `m`: Launch the MacroButtons application
 - `s`: Launch the StreamerView application
 
