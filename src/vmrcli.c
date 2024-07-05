@@ -40,7 +40,6 @@ static bool vflag = false;
 
 void help(void);
 enum kind set_kind(char *kval);
-int init_voicemeeter(enum kind kind);
 void interactive(PT_VMR vmr);
 void parse_input(PT_VMR vmr, char *input, int len);
 void parse_command(PT_VMR vmr, char *command);
