@@ -3,63 +3,40 @@
 #include <windows.h>
 #include "cdll.h"
 #include "util.h"
+#include "log.h"
 
-/*******************************************************************************/
-/**                           GET VOICEMEETER DIRECTORY                       **/
-/*******************************************************************************/
+static T_VBVMR_INTERFACE iVMR;
 
-#define INSTALLER_UNINST_KEY "VB:Voicemeeter {17359A74-1236-5467}"
+static long initialize_dll_interfaces(PT_VMR vmr);
+static bool registry_get_voicemeeter_folder(char *szDir);
 
-#ifndef KEY_WOW64_32KEY
-#define KEY_WOW64_32KEY 0x0200
-#endif
-
-bool __cdecl registry_get_voicemeeter_folder(char *szDir)
+PT_VMR create_interface()
 {
-    char szKey[256];
-    char sss[1024];
-    DWORD nnsize = 1024;
-    HKEY hkResult;
-    LONG rep;
-    DWORD pptype = REG_SZ;
-    sss[0] = 0;
-    const char uninstDirKey[] = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
+    PT_VMR vmr = &iVMR;
+    int rep;
 
-    // build Voicemeeter uninstallation key
-    strcpy(szKey, uninstDirKey);
-    strcat(szKey, "\\");
-    strcat(szKey, INSTALLER_UNINST_KEY);
-
-    // open key
-    rep = RegOpenKeyEx(HKEY_LOCAL_MACHINE, szKey, 0, KEY_READ, &hkResult);
-    if (rep != ERROR_SUCCESS)
+    rep = initialize_dll_interfaces(vmr);
+    if (rep < 0)
     {
-        // if not present we consider running in 64bit mode and force to read 32bit registry
-        rep = RegOpenKeyEx(HKEY_LOCAL_MACHINE, szKey, 0, KEY_READ | KEY_WOW64_32KEY, &hkResult);
+        if (rep == -100)
+        {
+            log_fatal("Voicemeeter is not installed");
+            exit(EXIT_FAILURE);
+        }
+        else
+        {
+            log_fatal("Error loading Voicemeeter dll with code %d\n", rep);
+            exit(EXIT_FAILURE);
+        }
     }
-    if (rep != ERROR_SUCCESS)
-        return false;
-    // read uninstall path from registry
-    rep = RegQueryValueEx(hkResult, "UninstallString", 0, &pptype, (unsigned char *)sss, &nnsize);
-    RegCloseKey(hkResult);
 
-    if (pptype != REG_SZ)
-        return false;
-    if (rep != ERROR_SUCCESS)
-        return false;
-    // remove name to get the path only
-    remove_name_in_path(sss);
-    if (nnsize > 512)
-        nnsize = 512;
-    strncpy(szDir, sss, nnsize);
-
-    return true;
+    return vmr;
 }
 
 /*******************************************************************************/
 /**                                GET DLL INTERFACE                          **/
 /*******************************************************************************/
-long initialize_dll_interfaces(PT_VMR vmr)
+static long initialize_dll_interfaces(PT_VMR vmr)
 {
     HMODULE G_H_Module = NULL;
     char szDllName[1024];
@@ -168,4 +145,56 @@ long initialize_dll_interfaces(PT_VMR vmr)
         return -38;
 
     return 0;
+}
+
+/*******************************************************************************/
+/**                           GET VOICEMEETER DIRECTORY                       **/
+/*******************************************************************************/
+
+#define INSTALLER_UNINST_KEY "VB:Voicemeeter {17359A74-1236-5467}"
+
+#ifndef KEY_WOW64_32KEY
+#define KEY_WOW64_32KEY 0x0200
+#endif
+
+static bool registry_get_voicemeeter_folder(char *szDir)
+{
+    char szKey[256];
+    char sss[1024];
+    DWORD nnsize = 1024;
+    HKEY hkResult;
+    LONG rep;
+    DWORD pptype = REG_SZ;
+    sss[0] = 0;
+    const char uninstDirKey[] = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
+
+    // build Voicemeeter uninstallation key
+    strcpy(szKey, uninstDirKey);
+    strcat(szKey, "\\");
+    strcat(szKey, INSTALLER_UNINST_KEY);
+
+    // open key
+    rep = RegOpenKeyEx(HKEY_LOCAL_MACHINE, szKey, 0, KEY_READ, &hkResult);
+    if (rep != ERROR_SUCCESS)
+    {
+        // if not present we consider running in 64bit mode and force to read 32bit registry
+        rep = RegOpenKeyEx(HKEY_LOCAL_MACHINE, szKey, 0, KEY_READ | KEY_WOW64_32KEY, &hkResult);
+    }
+    if (rep != ERROR_SUCCESS)
+        return false;
+    // read uninstall path from registry
+    rep = RegQueryValueEx(hkResult, "UninstallString", 0, &pptype, (unsigned char *)sss, &nnsize);
+    RegCloseKey(hkResult);
+
+    if (pptype != REG_SZ)
+        return false;
+    if (rep != ERROR_SUCCESS)
+        return false;
+    // remove name to get the path only
+    remove_name_in_path(sss);
+    if (nnsize > 512)
+        nnsize = 512;
+    strncpy(szDir, sss, nnsize);
+
+    return true;
 }

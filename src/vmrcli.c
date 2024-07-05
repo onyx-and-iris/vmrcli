@@ -36,12 +36,11 @@ struct result
     } val;
 };
 
-static T_VBVMR_INTERFACE iVMR;
-bool vflag = false;
+static bool vflag = false;
 
 void help(void);
 enum kind set_kind(char *kval);
-int init_voicemeeter(PT_VMR vmr, enum kind kind);
+int init_voicemeeter(enum kind kind);
 void interactive(PT_VMR vmr);
 void parse_input(PT_VMR vmr, char *input, int len);
 void parse_command(PT_VMR vmr, char *command);
@@ -109,11 +108,12 @@ int main(int argc, char *argv[])
         }
     }
 
-    PT_VMR vmr = &iVMR;
+    PT_VMR vmr = create_interface();
 
-    int rep = init_voicemeeter(vmr, kind);
+    int rep = login(vmr, kind);
     if (rep != 0)
     {
+        log_fatal("Error logging into the Voicemeeter API");
         exit(EXIT_FAILURE);
     }
 
@@ -144,9 +144,14 @@ int main(int argc, char *argv[])
 
     rep = logout(vmr);
     if (rep == 0)
+    {
         return EXIT_SUCCESS;
+    }
     else
+    {
+        log_fatal("Error logging out of the Voicemeeter API");
         return EXIT_FAILURE;
+    }
 }
 
 /**
@@ -200,40 +205,6 @@ enum kind set_kind(char *kval)
     {
         return UNKNOWN;
     }
-}
-
-/**
- * @brief Defines the DLL interface as a struct.
- * Logs into the API.
- *
- * @param vmr The API interface as a struct
- * @param kind
- * @return int
- */
-int init_voicemeeter(PT_VMR vmr, enum kind kind)
-{
-    int rep = initialize_dll_interfaces(vmr);
-    if (rep < 0)
-    {
-        if (rep == -100)
-        {
-            log_fatal("Voicemeeter is not installed");
-        }
-        else
-        {
-            log_fatal("Error loading Voicemeeter dll with code %d\n", rep);
-        }
-        return rep;
-    }
-
-    rep = login(vmr, kind);
-    if (rep != 0)
-    {
-        log_fatal("Error logging into Voicemeeter");
-        return rep;
-    }
-
-    return 0;
 }
 
 /**

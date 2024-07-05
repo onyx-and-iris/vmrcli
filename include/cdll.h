@@ -3,6 +3,6 @@
 
 #include "VoicemeeterRemote.h"
 
-long initialize_dll_interfaces(PT_VMR vmr);
+PT_VMR create_interface();
 
 #endif /*__CDLL_H__*/
