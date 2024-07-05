@@ -49,9 +49,11 @@ int main(int argc, char *argv[])
 {
     bool iflag = false,
          mflag = false,
-         sflag = false;
+         sflag = false,
+         pflag = false;
     int opt;
     int dvalue;
+    char *pvalue;
     enum kind kind = BANANAX64;
 
     if (argc == 1)
@@ -62,7 +64,7 @@ int main(int argc, char *argv[])
 
     log_set_level(LOG_WARN);
 
-    while ((opt = getopt(argc, argv, "hk:msiD:v")) != -1)
+    while ((opt = getopt(argc, argv, "hk:msp:iD:v")) != -1)
     {
         switch (opt)
         {
@@ -82,6 +84,10 @@ int main(int argc, char *argv[])
             break;
         case 's':
             sflag = true;
+            break;
+        case 'p':
+            pflag = true;
+            pvalue = optarg;
             break;
         case 'i':
             iflag = true;
@@ -128,6 +134,12 @@ int main(int argc, char *argv[])
         run_voicemeeter(vmr, STREAMERVIEW);
     }
 
+    if (pflag)
+    {
+        log_info("Profile %s loaded", pvalue);
+        set_parameter_string(vmr, "command.load", pvalue);
+    }
+
     if (iflag)
     {
         puts("Interactive mode enabled. Enter 'Q' to exit.");
@@ -160,13 +172,14 @@ int main(int argc, char *argv[])
 void help()
 {
     puts(
-        "Usage: ./vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-m] [-s] <api commands>\n"
+        "Usage: ./vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-p] [-m] [-s] <api commands>\n"
         "Where: \n"
         "\th: Prints the help message\n"
         "\ti: Enable interactive mode\n"
         "\tk: The kind of Voicemeeter (basic, banana, potato)\n"
         "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL\n"
         "\tv: Enable extra console output (toggle, set messages)\n"
+        "\tp: Load a user configuration (given the file name or a full path)\n"
         "\tm: Launch the MacroButtons application\n"
         "\ts: Launch the StreamerView application");
 }
