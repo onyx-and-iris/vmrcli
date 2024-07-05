@@ -179,7 +179,7 @@ void help()
         "\tk: The kind of Voicemeeter (basic, banana, potato)\n"
         "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL\n"
         "\tv: Enable extra console output (toggle, set messages)\n"
-        "\tc: Load a user configuration (given the file name or a full path)\n"
+        "\tc: Load a user configuration (give the full file path)\n"
         "\tm: Launch the MacroButtons application\n"
         "\ts: Launch the StreamerView application");
 }
