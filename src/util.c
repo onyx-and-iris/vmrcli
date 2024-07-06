@@ -32,9 +32,9 @@ void remove_name_in_path(char *szPath)
 }
 
 /**
- * @brief replaces multiple newlines and tabs with single spaces
+ * @brief Replaces multiple newlines and tabs with single spaces
  *
- * @param s The tring to be reduced
+ * @param s The string to be reduced
  * @param len Current length of the string
  * @return int New length of the string
  */
@@ -74,12 +74,12 @@ int replace_multiple_space_with_one(char *s, size_t len)
 }
 
 /**
- * @brief
+ * @brief Converts Voicemeeter's kind into a string.
  *
  * @param s Pointer to a character buffer
  * @param kind The kind of Voicemeeter.
  * @param n Maximum number of characters to be written to the buffer
- * @return char* The kind of Voicemeeter as a string
+ * @return char* String representation of the kind of Voicemeeter.
  */
 char *kind_as_string(char *s, int kind, int n)
 {
@@ -96,12 +96,12 @@ char *kind_as_string(char *s, int kind, int n)
 }
 
 /**
- * @brief returns Voicemeeter's version as a string
+ * @brief Converts Voicemeeter's version into a string.
  *
  * @param s Pointer to a character buffer
  * @param v Unprocessed version as a long int
  * @param n Maximum number of characters to be written to the buffer
- * @return char* Pointer to a character buffer
+ * @return char* String representation of the Voicemeeter version
  */
 char *version_as_string(char *s, long v, int n)
 {
