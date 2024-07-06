@@ -7,9 +7,9 @@
  * @date 2024-07-06
  *
  * @copyright Vincent Burel(c)2015-2021 All Rights Reserved
- * https://github.com/onyx-and-iris/Voicemeeter-SDK/blob/main/LICENSE
+ * https://github.com/vburel2018/Voicemeeter-SDK/blob/main/LICENSE
  *
- * Copyright (c) 2024
+ * Copyright (c) 2024 Onyx and Iris
  * https://github.com/onyx-and-iris/vmrcli/blob/main/LICENSE
  */
 
