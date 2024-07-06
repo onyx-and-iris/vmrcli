@@ -32,7 +32,7 @@ void remove_name_in_path(char *szPath)
 }
 
 /**
- * @brief Replaces multiple newlines and tabs with single spaces
+ * @brief Replaces multiple spaces and tabs with single spaces
  *
  * @param s The string to be reduced
  * @param len Current length of the string
