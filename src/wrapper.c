@@ -1,21 +1,32 @@
+/**
+ * @file wrapper.c
+ * @author Onyx and Iris (code@onyxandiris.online)
+ * @brief Provides public functions that wrap the iVMR calls
+ * @version 0.5.0
+ * @date 2024-07-06
+ *
+ * @copyright Copyright (c) 2024
+ * https://github.com/onyx-and-iris/vmrcli/blob/main/LICENSE
+ */
+
 #include <windows.h>
 #include <stdio.h>
 #include <time.h>
-#include "vmr.h"
+#include "wrapper.h"
 #include "log.h"
 #include "util.h"
 
-#define VERSION_STR_LEN 128
 #define KIND_STR_LEN 64
+#define VERSION_STR_LEN 32
 
 /**
  * @brief Logs into the API.
  * Tests for valid connection for up to 2 seconds.
  * If successful initializes the dirty parameters.
  *
- * @param vmr
- * @param kind
- * @return long
+ * @param vmr Pointer to the iVMR interface
+ * @param kind The kind of Voicemeeter Gui to launch.
+ * @return long VBVMR_Login return value
  */
 long login(PT_VMR vmr, int kind)
 {
@@ -59,7 +70,7 @@ long login(PT_VMR vmr, int kind)
  * @brief Logs out of the API giving a short wait to allow a
  * final instruction to complete.
  *
- * @param vmr The API interface as a struct
+ * @param vmr Pointer to the iVMR interface
  * @return long VBVMR_Logout return value
  */
 long logout(PT_VMR vmr)

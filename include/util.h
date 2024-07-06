@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2024 Onyx and Iris
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the MIT license. See `util.c` for details.
+ */
+
 #ifndef __UTIL_H__
 #define __UTIL_H__
 

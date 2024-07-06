@@ -1,20 +1,29 @@
+/**
+ * @file vmrcli.c
+ * @author Onyx and Iris (code@onyxandiris.online)
+ * @brief A Voicemeeter Remote Command Line Interface
+ * @version 0.5.0
+ * @date 2024-07-06
+ *
+ * @copyright Copyright (c) 2024
+ * https://github.com/onyx-and-iris/vmrcli/blob/main/LICENSE
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <getopt.h>
 #include <string.h>
 #include <ctype.h>
-#include "cdll.h"
-#include "vmr.h"
+#include "ivmr.h"
+#include "wrapper.h"
 #include "log.h"
 #include "util.h"
 
 #define MAX_LINE 512
 
 /**
- * @brief An enum used to define the kind of value
- * a 'get' call returns.
- *
+ * @enum The kind of values a get call may return.
  */
 enum
 {
@@ -23,8 +32,7 @@ enum
 };
 
 /**
- * @brief A struct holding the result of a get call.
- *
+ * @struct A struct holding the result of a get call.
  */
 struct result
 {
@@ -167,7 +175,6 @@ int main(int argc, char *argv[])
 
 /**
  * @brief prints the help message
- *
  */
 void help()
 {
@@ -185,9 +192,10 @@ void help()
 }
 
 /**
- * @brief Set the kind object
+ * @brief Set the kind of Voicemeeter based on the value of -k flag.
+ * For 64 bit systems the value is promoted to X64.
  *
- * @param kval
+ * @param kval Value of the -k flag
  * @return enum kind
  */
 enum kind set_kind(char *kval)
@@ -224,7 +232,7 @@ enum kind set_kind(char *kval)
  * Break if 'Q' is entered on the interactive prompt.
  * Each line is passed to parse_input()
  *
- * @param vmr The API interface as a struct
+ * @param vmr Pointer to the iVMR interface
  */
 void interactive(PT_VMR vmr)
 {
@@ -250,7 +258,7 @@ void interactive(PT_VMR vmr)
  * @brief Walks through each line split by a space delimiter.
  * Each token is passed to parse_command()
  *
- * @param vmr The API interface as a struct
+ * @param vmr Pointer to the iVMR interface
  * @param input Each input line, from stdin or CLI args
  * @param len The length of the input line
  */
@@ -272,7 +280,7 @@ void parse_input(PT_VMR vmr, char *input, int len)
  * See command type definitions in:
  * https://github.com/onyx-and-iris/vmrcli?tab=readme-ov-file#api-commands
  *
- * @param vmr The API interface as a struct
+ * @param vmr Pointer to the iVMR interface
  * @param command Each token from the input line as its own command string
  */
 void parse_command(PT_VMR vmr, char *command)
@@ -331,7 +339,7 @@ void parse_command(PT_VMR vmr, char *command)
 /**
  * @brief
  *
- * @param vmr The API interface as a struct
+ * @param vmr Pointer to the iVMR interface
  * @param command A parsed 'get' command as a string
  * @param res A struct holding the result of the API call.
  */

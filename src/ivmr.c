@@ -1,7 +1,22 @@
+/**
+ * @file ivmr.c
+ * @author Vincent Burel, Onyx and Iris (code@onyxandiris.online)
+ * @brief Functions for initializing the iVMR interface.
+ * Defines a single public function that returns a pointer to the interface.
+ * @version 0.5.0
+ * @date 2024-07-06
+ *
+ * @copyright Vincent Burel(c)2015-2021 All Rights Reserved
+ * https://github.com/onyx-and-iris/Voicemeeter-SDK/blob/main/LICENSE
+ *
+ * Copyright (c) 2024
+ * https://github.com/onyx-and-iris/vmrcli/blob/main/LICENSE
+ */
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <windows.h>
-#include "cdll.h"
+#include "ivmr.h"
 #include "util.h"
 #include "log.h"
 
@@ -10,6 +25,11 @@ static T_VBVMR_INTERFACE iVMR;
 static long initialize_dll_interfaces(PT_VMR vmr);
 static bool registry_get_voicemeeter_folder(char *szDir);
 
+/**
+ * @brief Create an interface object
+ *
+ * @return PT_VMR Pointer to the iVMR interface
+ */
 PT_VMR create_interface()
 {
     PT_VMR vmr = &iVMR;

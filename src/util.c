@@ -1,12 +1,23 @@
+/**
+ * @file util.c
+ * @author Onyx and Iris (code@onyxandiris.online)
+ * @brief Utility functions.
+ * @version 0.5.0
+ * @date 2024-07-06
+ *
+ * @copyright Copyright (c) 2024
+ * https://github.com/onyx-and-iris/vmrcli/blob/main/LICENSE
+ */
+
 #include <stddef.h>
 #include <stdio.h>
-#include "vmr.h"
+#include "wrapper.h"
 #include "util.h"
 
 /**
  * @brief Removes the last part of a path
  *
- * @param szPath
+ * @param szPath Pointer to the path string
  */
 void remove_name_in_path(char *szPath)
 {
@@ -23,9 +34,9 @@ void remove_name_in_path(char *szPath)
 /**
  * @brief replaces multiple newlines and tabs with single spaces
  *
- * @param s the string to be reduced
- * @param len current length of the string
- * @return int new length of the string
+ * @param s The tring to be reduced
+ * @param len Current length of the string
+ * @return int New length of the string
  */
 int replace_multiple_space_with_one(char *s, size_t len)
 {
@@ -67,7 +78,7 @@ int replace_multiple_space_with_one(char *s, size_t len)
  *
  * @param s Pointer to a character buffer
  * @param kind The kind of Voicemeeter.
- * @param n maximum number of characters to be written to the buffer
+ * @param n Maximum number of characters to be written to the buffer
  * @return char* The kind of Voicemeeter as a string
  */
 char *kind_as_string(char *s, int kind, int n)
@@ -87,10 +98,10 @@ char *kind_as_string(char *s, int kind, int n)
 /**
  * @brief returns Voicemeeter's version as a string
  *
- * @param s string buffer the version will be written to
- * @param v unprocessed version as a long int
- * @param n maximum number of characters to be written to the buffer
- * @return char*
+ * @param s Pointer to a character buffer
+ * @param v Unprocessed version as a long int
+ * @param n Maximum number of characters to be written to the buffer
+ * @return char* Pointer to a character buffer
  */
 char *version_as_string(char *s, long v, int n)
 {

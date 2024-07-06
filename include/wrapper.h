@@ -1,5 +1,12 @@
-#ifndef __VMR_H__
-#define __VMR_H__
+/**
+ * Copyright (c) 2024 Onyx and Iris
+ *
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the MIT license. See `wrapper.c` for details.
+ */
+
+#ifndef __WRAPPER_H__
+#define __WRAPPER_H__
 
 #include <stdbool.h>
 #include "voicemeeterRemote.h"
@@ -36,4 +43,4 @@ long macrobutton_setstatus(PT_VMR vmr, long n, float val, long mode);
 
 void clear_dirty(PT_VMR vmr);
 
-#endif /* __VMR_H__ */
+#endif /* __WRAPPER_H__ */
