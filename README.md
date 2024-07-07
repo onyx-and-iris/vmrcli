@@ -13,7 +13,7 @@
 ## `Use`
 
 ```powershell
-./vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>
+.\vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>
 ```
 
 Where:
@@ -38,13 +38,13 @@ Examples:
 Launch basic GUI, set log level to INFO, Toggle Strip 0 Mute, print its new value, then decrease Bus 0 Gain by 3.8
 
 ```powershell
-./vmrcli.exe -kbasic -D2 !strip[0].mute strip[0].mute bus[0].gain-=3.8
+.\vmrcli.exe -kbasic -D2 !strip[0].mute strip[0].mute bus[0].gain-=3.8
 ```
 
 Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then print Strip 2 label
 
 ```powershell
-./vmrcli.exe -kbanana -D1 strip[0].label=podmic strip[2].label
+.\vmrcli.exe -kbanana -D1 strip[0].label=podmic strip[2].label
 ```
 
 ## `Interactive Mode`
@@ -52,7 +52,7 @@ Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then prin
 Running the following command in Powershell:
 
 ```powershell
-./vmrcli.exe -i
+.\vmrcli.exe -i
 ```
 
 Will open an interactive prompt:
@@ -69,7 +69,13 @@ API commands follow the same rules as listed above. Entering `Q` or `q` will exi
 Scripts can be loaded from text files, for example in Powershell:
 
 ```powershell
-./vmrcli.exe -D1 $(Get-Content .\example_commands.txt)
+.\vmrcli.exe -D1 $(Get-Content .\example_commands.txt)
+```
+
+You may also pipe a scripts contents to the CLI:
+
+```powershell
+$(Get-Content .\example_commands.txt) | .\vmrcli.exe -D1 -i
 ```
 
 Multiple API commands can be in a single line but they should be space separated.
