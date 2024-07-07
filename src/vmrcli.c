@@ -15,6 +15,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <ctype.h>
+#include <windows.h>
 #include "ivmr.h"
 #include "wrapper.h"
 #include "log.h"
@@ -146,6 +147,8 @@ int main(int argc, char *argv[])
     {
         log_info("Profile %s loaded", cvalue);
         set_parameter_string(vmr, "command.load", cvalue);
+        Sleep(250);
+        clear_dirty(vmr);
     }
 
     if (iflag)
