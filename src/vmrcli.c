@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
     {
         log_info("Profile %s loaded", cvalue);
         set_parameter_string(vmr, "command.load", cvalue);
-        Sleep(250);
+        Sleep(300);
         clear_dirty(vmr);
     }
 
