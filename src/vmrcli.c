@@ -243,13 +243,12 @@ void interactive(PT_VMR vmr)
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
         input[strcspn(input, "\n")] = 0;
-        len = strlen(input);
-        if (len == 1 && toupper(input[0]) == 'Q')
+        if ((len = strlen(input)) == 1 && toupper(input[0]) == 'Q')
             break;
 
         parse_input(vmr, input, len);
 
-        memset(input, '\0', MAX_LINE); /* reset input buffer */
+        memset(input, 0, MAX_LINE); /* reset input buffer */
         printf(">> ");
     }
 }
@@ -328,7 +327,8 @@ void parse_command(PT_VMR vmr, char *command)
             printf("%s: %.1f\n", command, res.val.f);
             break;
         case STRING_T:
-            printf("%s: %ls\n", command, res.val.s);
+            if (res.val.s[0] != '\0')
+                printf("%s: %ls\n", command, res.val.s);
             break;
         default:
             break;
