@@ -211,7 +211,7 @@ static bool registry_get_voicemeeter_folder(char *szDir)
     if (rep != ERROR_SUCCESS)
         return false;
     // remove name to get the path only
-    remove_name_in_path(sss);
+    remove_last_part_of_path(sss);
     if (nnsize > 512)
         nnsize = 512;
     strncpy(szDir, sss, nnsize);

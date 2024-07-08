@@ -11,24 +11,24 @@
 
 #include <stddef.h>
 #include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 #include "wrapper.h"
 #include "util.h"
 
 /**
  * @brief Removes the last part of a path
  *
- * @param szPath Pointer to the path string
+ * @param fullpath The entire path
  */
-void remove_name_in_path(char *szPath)
+void remove_last_part_of_path(char *fullpath)
 {
-    char *p = szPath;
+    char *p;
 
-    while (*p++)
-        ;
-    while (p > szPath && *p != '\\')
-        p--;
-    if (*p == '\\')
+    if ((p = strrchr(fullpath, '\\')) != NULL)
+    {
         *p = '\0';
+    }
 }
 
 /**
@@ -38,12 +38,12 @@ void remove_name_in_path(char *szPath)
  * @param len Current length of the string
  * @return int New length of the string
  */
-int replace_multiple_space_with_one(char *s, size_t len)
+int replace_blanks_with_single_space(char *s, size_t len)
 {
     int j = 0;
     int count = 0;
 
-    if (len == 1 && (s[0] == ' ' || s[0] == '\t'))
+    if (len == 1 && isblank(s[0]))
     {
         s[0] = '\0';
         return len;
@@ -54,12 +54,11 @@ int replace_multiple_space_with_one(char *s, size_t len)
 
     for (int i = 0; s[i] != '\0'; i++)
     {
-        if (s[i] == ' ' || s[i] == '\t')
+        if (isblank(s[i]))
         {
             count++;
         }
-
-        if (s[i] != ' ' && s[i] != '\t')
+        else
         {
             if (count >= 1)
             {

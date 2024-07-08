@@ -8,8 +8,8 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-void remove_name_in_path(char *szPath);
-int replace_multiple_space_with_one(char *s, size_t len);
+void remove_last_part_of_path(char *szPath);
+int replace_blanks_with_single_space(char *s, size_t len);
 char *kind_as_string(char *s, int kind, int n);
 char *version_as_string(char *, long v, int n);
 

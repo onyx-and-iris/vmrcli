@@ -268,7 +268,7 @@ void parse_input(PT_VMR vmr, char *input, int len)
 {
     char *token;
 
-    replace_multiple_space_with_one(input, len);
+    replace_blanks_with_single_space(input, len);
     token = strtok(input, " ");
     while (token != NULL)
     {
