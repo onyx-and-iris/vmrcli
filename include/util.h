@@ -8,9 +8,9 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-void remove_last_part_of_path(char *szPath);
+void remove_last_part_of_path(char *fullpath);
 int replace_blanks_with_single_space(char *s, size_t len);
 char *kind_as_string(char *s, int kind, int n);
-char *version_as_string(char *, long v, int n);
+char *version_as_string(char *s, long v, int n);
 
 #endif /* __UTIL_H__ */
