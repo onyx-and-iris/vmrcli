@@ -256,7 +256,7 @@ void interactive(PT_VMR vmr)
 }
 
 /**
- * @brief Walks through each line split by a space delimiter.
+ * @brief Walks through each line split by " \t;," delimiters.
  * Each token is passed to parse_command()
  *
  * @param vmr Pointer to the iVMR interface
