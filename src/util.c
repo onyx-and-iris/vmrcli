@@ -32,47 +32,6 @@ void remove_last_part_of_path(char *fullpath)
 }
 
 /**
- * @brief Replaces multiple spaces and tabs with single spaces
- *
- * @param s The string to be reduced
- * @param len Current length of the string
- * @return int New length of the string
- */
-int replace_blanks_with_single_space(char *s, size_t len)
-{
-    int j = 0;
-    int count = 0;
-
-    if (len == 1 && isblank(s[0]))
-    {
-        s[0] = '\0';
-        return len;
-    }
-
-    if (len < 2)
-        return len;
-
-    for (int i = 0; s[i] != '\0'; i++)
-    {
-        if (isblank(s[i]))
-        {
-            count++;
-        }
-        else
-        {
-            if (count >= 1)
-            {
-                count = 0;
-                s[j++] = ' ';
-            }
-            s[j++] = s[i];
-        }
-    }
-    s[j] = '\0';
-    return j;
-}
-
-/**
  * @brief Converts Voicemeeter's kind into a string.
  *
  * @param s Pointer to a character buffer

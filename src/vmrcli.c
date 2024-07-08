@@ -50,7 +50,7 @@ static bool vflag = false;
 void help(void);
 enum kind set_kind(char *kval);
 void interactive(PT_VMR vmr);
-void parse_input(PT_VMR vmr, char *input, int len);
+void parse_input(PT_VMR vmr, char *input);
 void parse_command(PT_VMR vmr, char *command);
 void get(PT_VMR vmr, char *command, struct result *res);
 
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
     {
         for (int i = optind; i < argc; i++)
         {
-            parse_input(vmr, argv[i], strlen(argv[i]));
+            parse_input(vmr, argv[i]);
         }
     }
 
@@ -240,16 +240,15 @@ enum kind set_kind(char *kval)
 void interactive(PT_VMR vmr)
 {
     char input[MAX_LINE];
-    size_t len;
 
     printf(">> ");
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
         input[strcspn(input, "\n")] = 0;
-        if ((len = strlen(input)) == 1 && toupper(input[0]) == 'Q')
+        if (strlen(input) == 1 && toupper(input[0]) == 'Q')
             break;
 
-        parse_input(vmr, input, len);
+        parse_input(vmr, input);
 
         memset(input, 0, MAX_LINE); /* reset input buffer */
         printf(">> ");
@@ -262,18 +261,16 @@ void interactive(PT_VMR vmr)
  *
  * @param vmr Pointer to the iVMR interface
  * @param input Each input line, from stdin or CLI args
- * @param len The length of the input line
  */
-void parse_input(PT_VMR vmr, char *input, int len)
+void parse_input(PT_VMR vmr, char *input)
 {
-    char *token;
+    char *token, *p;
 
-    replace_blanks_with_single_space(input, len);
-    token = strtok(input, " ");
+    token = strtok_r(input, " \t;,", &p);
     while (token != NULL)
     {
         parse_command(vmr, token);
-        token = strtok(NULL, " ");
+        token = strtok_r(NULL, " \t;,", &p);
     }
 }
 
