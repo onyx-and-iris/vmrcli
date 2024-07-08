@@ -2,7 +2,7 @@
  * @file vmrcli.c
  * @author Onyx and Iris (code@onyxandiris.online)
  * @brief A Voicemeeter Remote Command Line Interface
- * @version 0.5.0
+ * @version 0.6.0
  * @date 2024-07-06
  *
  * @copyright Copyright (c) 2024

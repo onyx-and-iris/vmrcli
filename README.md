@@ -78,7 +78,7 @@ You may also pipe a scripts contents to the CLI:
 $(Get-Content .\example_commands.txt) | .\vmrcli.exe -D1 -i
 ```
 
-Multiple API commands can be in a single line but they should be space separated.
+Multiple API commands can be in a single line, they may be delimited by space, `;` or `,`.
 
 ## `Build`
 
