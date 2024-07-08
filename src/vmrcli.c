@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
 void help()
 {
     puts(
-        "Usage: ./vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>\n"
+        "Usage: .\\vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>\n"
         "Where: \n"
         "\th: Prints the help message\n"
         "\ti: Enable interactive mode\n"
@@ -340,7 +340,8 @@ void parse_command(PT_VMR vmr, char *command)
 }
 
 /**
- * @brief
+ * @brief Get the value of a float or string parameter.
+ * Stores its type and value into a result struct
  *
  * @param vmr Pointer to the iVMR interface
  * @param command A parsed 'get' command as a string
