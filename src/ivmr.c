@@ -3,7 +3,7 @@
  * @author Vincent Burel, Onyx and Iris (code@onyxandiris.online)
  * @brief Functions for initializing the iVMR interface.
  * Defines a single public function that returns a pointer to the interface.
- * @version 0.6.0
+ * @version 0.7.0
  * @date 2024-07-06
  *
  * @copyright Vincent Burel(c)2015-2021 All Rights Reserved
