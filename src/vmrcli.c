@@ -126,14 +126,14 @@ int main(int argc, char *argv[])
             vflag = true;
             break;
         case '?':
-            log_warn("unknown option -- '%c'\n"
-                     "Try .\\vmrcli.exe -h for more information.",
-                     optopt);
+            log_fatal("unknown option -- '%c'\n"
+                      "Try .\\vmrcli.exe -h for more information.",
+                      optopt);
             exit(EXIT_FAILURE);
         case ':':
-            log_warn("missing argument for option -- '%c'\n"
-                     "Try .\\vmrcli.exe -h for more information.",
-                     optopt);
+            log_fatal("missing argument for option -- '%c'\n"
+                      "Try .\\vmrcli.exe -h for more information.",
+                      optopt);
             exit(EXIT_FAILURE);
         case 'h':
             [[fallthrough]];
