@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
                      optopt);
             exit(EXIT_FAILURE);
         case 'h':
-            /* FALLTHROUGH */
+            [[fallthrough]];
         default:
             usage();
         }

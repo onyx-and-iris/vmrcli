@@ -15,7 +15,7 @@ ifeq ($(LOG_USE_COLOR), yes)
 else
 	CPPFLAGS := -Iinclude -MMD -MP
 endif
-CFLAGS = -O -Wall -W -pedantic -ansi -std=c99
+CFLAGS = -O -Wall -W -pedantic -ansi -std=c2x
 LDFLAGS  := -Llib
 LDLIBS   := -lm
 
