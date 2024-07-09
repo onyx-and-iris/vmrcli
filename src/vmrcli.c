@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
 
     PT_VMR vmr = create_interface();
 
-    int rep = login(vmr, kind);
+    long rep = login(vmr, kind);
     if (rep != 0)
     {
         log_fatal("Error logging into the Voicemeeter API");
@@ -185,14 +185,14 @@ int main(int argc, char *argv[])
     }
 
     rep = logout(vmr);
-    if (rep == 0)
-    {
-        return EXIT_SUCCESS;
-    }
-    else
+    if (rep != 0)
     {
         log_fatal("Error logging out of the Voicemeeter API");
         return EXIT_FAILURE;
+    }
+    else
+    {
+        return EXIT_SUCCESS;
     }
 }
 

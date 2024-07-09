@@ -30,7 +30,7 @@
  */
 long login(PT_VMR vmr, int kind)
 {
-    int rep;
+    long rep;
     long v;
 
     log_trace("VBVMR_Login()");
@@ -75,7 +75,7 @@ long login(PT_VMR vmr, int kind)
  */
 long logout(PT_VMR vmr)
 {
-    int rep;
+    long rep;
 
     Sleep(20); /* give time for last command */
     log_trace("VBVMR_Logout()");
