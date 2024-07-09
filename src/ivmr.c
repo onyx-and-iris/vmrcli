@@ -20,6 +20,13 @@
 #include "util.h"
 #include "log.h"
 
+#define PRAGMA_IgnoreWCastIncompatibleFuncTypes \
+    _Pragma("GCC diagnostic push")              \
+        _Pragma("GCC diagnostic ignored \"-Wcast-function-type\"")
+
+#define PRAGMA_Pop \
+    _Pragma("GCC diagnostic pop")
+
 static T_VBVMR_INTERFACE iVMR;
 
 static long initialize_dll_interfaces(PT_VMR vmr);
@@ -79,6 +86,8 @@ static long initialize_dll_interfaces(PT_VMR vmr)
     if (G_H_Module == NULL)
         return -101;
 
+    PRAGMA_IgnoreWCastIncompatibleFuncTypes;
+
     // Get function pointers
     vmr->VBVMR_Login = (T_VBVMR_Login)GetProcAddress(G_H_Module, "VBVMR_Login");
     vmr->VBVMR_Logout = (T_VBVMR_Logout)GetProcAddress(G_H_Module, "VBVMR_Logout");
@@ -109,6 +118,8 @@ static long initialize_dll_interfaces(PT_VMR vmr)
     vmr->VBVMR_MacroButton_IsDirty = (T_VBVMR_MacroButton_IsDirty)GetProcAddress(G_H_Module, "VBVMR_MacroButton_IsDirty");
     vmr->VBVMR_MacroButton_GetStatus = (T_VBVMR_MacroButton_GetStatus)GetProcAddress(G_H_Module, "VBVMR_MacroButton_GetStatus");
     vmr->VBVMR_MacroButton_SetStatus = (T_VBVMR_MacroButton_SetStatus)GetProcAddress(G_H_Module, "VBVMR_MacroButton_SetStatus");
+
+    PRAGMA_Pop;
 
     // check pointers are valid
     if (vmr->VBVMR_Login == NULL)

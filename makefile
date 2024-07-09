@@ -33,6 +33,6 @@ $(BIN_DIR) $(OBJ_DIR):
 	pwsh -Command New-Item -Path $@ -ItemType Directory
 
 clean:
-	pwsh -Command Remove-Item -Recurse $(EXE), $(OBJ_DIR)
+	pwsh -Command Remove-Item -Recurse $(EXE), $(OBJ_DIR) -force
 
 -include $(OBJ:.o=.d)
