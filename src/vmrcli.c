@@ -21,6 +21,17 @@
 #include "log.h"
 #include "util.h"
 
+#define USAGE "Usage: .\\vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>\n" \
+              "Where: \n"                                                                     \
+              "\th: Prints the help message\n"                                                \
+              "\ti: Enable interactive mode\n"                                                \
+              "\tk: The kind of Voicemeeter (basic, banana, potato)\n"                        \
+              "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL\n"       \
+              "\tv: Enable extra console output (toggle, set messages)\n"                     \
+              "\tc: Load a user configuration (give the full file path)\n"                    \
+              "\tm: Launch the MacroButtons application\n"                                    \
+              "\ts: Launch the StreamerView application"
+#define OPTSTR ":hk:msc:iD:v"
 #define MAX_LINE 512
 
 /**
@@ -47,7 +58,7 @@ struct result
 
 static bool vflag = false;
 
-void help(void);
+static void usage(void);
 enum kind set_kind(char *kval);
 void interactive(PT_VMR vmr);
 void parse_input(PT_VMR vmr, char *input);
@@ -67,19 +78,16 @@ int main(int argc, char *argv[])
 
     if (argc == 1)
     {
-        help();
-        exit(EXIT_SUCCESS);
+        usage();
     }
 
     log_set_level(LOG_WARN);
 
-    while ((opt = getopt(argc, argv, "hk:msc:iD:v")) != -1)
+    opterr = 0;
+    while ((opt = getopt(argc, argv, OPTSTR)) != -1)
     {
         switch (opt)
         {
-        case 'h':
-            help();
-            exit(EXIT_SUCCESS);
         case 'k':
             kind = set_kind(optarg);
             if (kind == UNKNOWN)
@@ -117,8 +125,20 @@ int main(int argc, char *argv[])
         case 'v':
             vflag = true;
             break;
+        case '?':
+            log_warn("unknown option -- '%c'\n"
+                     "Try .\\vmrcli.exe -h for more information.",
+                     optopt);
+            exit(EXIT_FAILURE);
+        case ':':
+            log_warn("missing argument for option -- '%c'\n"
+                     "Try .\\vmrcli.exe -h for more information.",
+                     optopt);
+            exit(EXIT_FAILURE);
+        case 'h':
+            /* FALLTHROUGH */
         default:
-            abort();
+            usage();
         }
     }
 
@@ -179,19 +199,10 @@ int main(int argc, char *argv[])
 /**
  * @brief prints the help message
  */
-void help()
+static void usage()
 {
-    puts(
-        "Usage: .\\vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>\n"
-        "Where: \n"
-        "\th: Prints the help message\n"
-        "\ti: Enable interactive mode\n"
-        "\tk: The kind of Voicemeeter (basic, banana, potato)\n"
-        "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL\n"
-        "\tv: Enable extra console output (toggle, set messages)\n"
-        "\tc: Load a user configuration (give the full file path)\n"
-        "\tm: Launch the MacroButtons application\n"
-        "\ts: Launch the StreamerView application");
+    puts(USAGE);
+    exit(EXIT_SUCCESS);
 }
 
 /**
@@ -204,30 +215,13 @@ void help()
 enum kind set_kind(char *kval)
 {
     if (strcmp(kval, "basic") == 0)
-    {
-        if (sizeof(void *) == 8)
-            return BASICX64;
-        else
-            return BASIC;
-    }
+        return sizeof(void *) == 8 ? BASICX64 : BASIC;
     else if (strcmp(kval, "banana") == 0)
-    {
-        if (sizeof(void *) == 8)
-            return BANANAX64;
-        else
-            return BANANA;
-    }
+        return sizeof(void *) == 8 ? BANANAX64 : BANANA;
     else if (strcmp(kval, "potato") == 0)
-    {
-        if (sizeof(void *) == 8)
-            return POTATOX64;
-        else
-            return POTATO;
-    }
+        return sizeof(void *) == 8 ? POTATOX64 : POTATO;
     else
-    {
         return UNKNOWN;
-    }
 }
 
 /**
