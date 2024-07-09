@@ -687,43 +687,43 @@ extern "C"
 	/*                          'C' STRUCTURED INTERFACE                          */
 	/******************************************************************************/
 
-	typedef long long(__stdcall *T_VBVMR_Login)(void);
-	typedef long long(__stdcall *T_VBVMR_Logout)(void);
-	typedef long long(__stdcall *T_VBVMR_RunVoicemeeter)(long vType);
+	typedef long(__stdcall *T_VBVMR_Login)(void);
+	typedef long(__stdcall *T_VBVMR_Logout)(void);
+	typedef long(__stdcall *T_VBVMR_RunVoicemeeter)(long vType);
 
-	typedef long long(__stdcall *T_VBVMR_GetVoicemeeterType)(long *pType);
-	typedef long long(__stdcall *T_VBVMR_GetVoicemeeterVersion)(long *pVersion);
+	typedef long(__stdcall *T_VBVMR_GetVoicemeeterType)(long *pType);
+	typedef long(__stdcall *T_VBVMR_GetVoicemeeterVersion)(long *pVersion);
 
-	typedef long long(__stdcall *T_VBVMR_IsParametersDirty)(void);
-	typedef long long(__stdcall *T_VBVMR_GetParameterFloat)(char *szParamName, float *pValue);
-	typedef long long(__stdcall *T_VBVMR_GetParameterStringA)(char *szParamName, char *szString);
-	typedef long long(__stdcall *T_VBVMR_GetParameterStringW)(char *szParamName, unsigned short *wszString);
+	typedef long(__stdcall *T_VBVMR_IsParametersDirty)(void);
+	typedef long(__stdcall *T_VBVMR_GetParameterFloat)(char *szParamName, float *pValue);
+	typedef long(__stdcall *T_VBVMR_GetParameterStringA)(char *szParamName, char *szString);
+	typedef long(__stdcall *T_VBVMR_GetParameterStringW)(char *szParamName, unsigned short *wszString);
 
-	typedef long long(__stdcall *T_VBVMR_GetLevel)(long nType, long nuChannel, float *pValue);
-	typedef long long(__stdcall *T_VBVMR_GetMidiMessage)(unsigned char *pMIDIBuffer, long nbByteMax);
-	typedef long long(__stdcall *T_VBVMR_SendMidiMessage)(unsigned char *pMIDIBuffer, long nbByteMax);
+	typedef long(__stdcall *T_VBVMR_GetLevel)(long nType, long nuChannel, float *pValue);
+	typedef long(__stdcall *T_VBVMR_GetMidiMessage)(unsigned char *pMIDIBuffer, long nbByteMax);
+	typedef long(__stdcall *T_VBVMR_SendMidiMessage)(unsigned char *pMIDIBuffer, long nbByteMax);
 
-	typedef long long(__stdcall *T_VBVMR_SetParameterFloat)(char *szParamName, float Value);
-	typedef long long(__stdcall *T_VBVMR_SetParameters)(char *szParamScript);
-	typedef long long(__stdcall *T_VBVMR_SetParametersW)(unsigned short *szParamScript);
-	typedef long long(__stdcall *T_VBVMR_SetParameterStringA)(char *szParamName, char *szString);
-	typedef long long(__stdcall *T_VBVMR_SetParameterStringW)(char *szParamName, unsigned short *wszString);
+	typedef long(__stdcall *T_VBVMR_SetParameterFloat)(char *szParamName, float Value);
+	typedef long(__stdcall *T_VBVMR_SetParameters)(char *szParamScript);
+	typedef long(__stdcall *T_VBVMR_SetParametersW)(unsigned short *szParamScript);
+	typedef long(__stdcall *T_VBVMR_SetParameterStringA)(char *szParamName, char *szString);
+	typedef long(__stdcall *T_VBVMR_SetParameterStringW)(char *szParamName, unsigned short *wszString);
 
-	typedef long long(__stdcall *T_VBVMR_Output_GetDeviceNumber)(void);
-	typedef long long(__stdcall *T_VBVMR_Output_GetDeviceDescA)(long zindex, long *nType, char *szDeviceName, char *szHardwareId);
-	typedef long long(__stdcall *T_VBVMR_Output_GetDeviceDescW)(long zindex, long *nType, unsigned short *wszDeviceName, unsigned short *wszHardwareId);
-	typedef long long(__stdcall *T_VBVMR_Input_GetDeviceNumber)(void);
-	typedef long long(__stdcall *T_VBVMR_Input_GetDeviceDescA)(long zindex, long *nType, char *szDeviceName, char *szHardwareId);
-	typedef long long(__stdcall *T_VBVMR_Input_GetDeviceDescW)(long zindex, long *nType, unsigned short *wszDeviceName, unsigned short *wszHardwareId);
+	typedef long(__stdcall *T_VBVMR_Output_GetDeviceNumber)(void);
+	typedef long(__stdcall *T_VBVMR_Output_GetDeviceDescA)(long zindex, long *nType, char *szDeviceName, char *szHardwareId);
+	typedef long(__stdcall *T_VBVMR_Output_GetDeviceDescW)(long zindex, long *nType, unsigned short *wszDeviceName, unsigned short *wszHardwareId);
+	typedef long(__stdcall *T_VBVMR_Input_GetDeviceNumber)(void);
+	typedef long(__stdcall *T_VBVMR_Input_GetDeviceDescA)(long zindex, long *nType, char *szDeviceName, char *szHardwareId);
+	typedef long(__stdcall *T_VBVMR_Input_GetDeviceDescW)(long zindex, long *nType, unsigned short *wszDeviceName, unsigned short *wszHardwareId);
 
-	typedef long long(__stdcall *T_VBVMR_AudioCallbackRegister)(long mode, T_VBVMR_VBAUDIOCALLBACK pCallback, void *lpUser, char szClientName[64]);
-	typedef long long(__stdcall *T_VBVMR_AudioCallbackStart)(void);
-	typedef long long(__stdcall *T_VBVMR_AudioCallbackStop)(void);
-	typedef long long(__stdcall *T_VBVMR_AudioCallbackUnregister)(void);
+	typedef long(__stdcall *T_VBVMR_AudioCallbackRegister)(long mode, T_VBVMR_VBAUDIOCALLBACK pCallback, void *lpUser, char szClientName[64]);
+	typedef long(__stdcall *T_VBVMR_AudioCallbackStart)(void);
+	typedef long(__stdcall *T_VBVMR_AudioCallbackStop)(void);
+	typedef long(__stdcall *T_VBVMR_AudioCallbackUnregister)(void);
 
-	typedef long long(__stdcall *T_VBVMR_MacroButton_IsDirty)(void);
-	typedef long long(__stdcall *T_VBVMR_MacroButton_GetStatus)(long nuLogicalButton, float *pValue, long bitmode);
-	typedef long long(__stdcall *T_VBVMR_MacroButton_SetStatus)(long nuLogicalButton, float fValue, long bitmode);
+	typedef long(__stdcall *T_VBVMR_MacroButton_IsDirty)(void);
+	typedef long(__stdcall *T_VBVMR_MacroButton_GetStatus)(long nuLogicalButton, float *pValue, long bitmode);
+	typedef long(__stdcall *T_VBVMR_MacroButton_SetStatus)(long nuLogicalButton, float fValue, long bitmode);
 
 	typedef struct tagVBVMR_INTERFACE
 	{
