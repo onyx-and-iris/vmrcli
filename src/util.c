@@ -97,9 +97,9 @@ struct quickcommand *command_in_quickcommands(const char *command_key, const str
 {
     for (int i = 0; i < n; i++)
     {
-        if (strncmp(command_key, quickcommands[i].name, strlen(command_key)) == 0)
+        if (strcmp(command_key, quickcommands[i].name) == 0)
         {
-            return (struct quickcommand *)&quickcommands[i];
+            return (struct quickcommand *)(quickcommands + i);
         }
     }
     return NULL;
