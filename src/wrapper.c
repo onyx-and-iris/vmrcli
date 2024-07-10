@@ -18,6 +18,7 @@
 
 #define KIND_STR_LEN 64
 #define VERSION_STR_LEN 32
+#define LOGIN_TIMEOUT 2
 
 /**
  * @brief Logs into the API.
@@ -44,7 +45,6 @@ long login(PT_VMR vmr, int kind)
             kind_as_string(kind_s, kind, KIND_STR_LEN));
     }
 
-    int timeout = 2;
     time_t start = time(NULL);
     do
     {
@@ -57,7 +57,7 @@ long login(PT_VMR vmr, int kind)
             break;
         }
         Sleep(50);
-    } while (time(NULL) < start + timeout);
+    } while (difftime(time(NULL), start) < LOGIN_TIMEOUT);
 
     if (rep == 0)
     {
