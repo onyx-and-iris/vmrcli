@@ -2,7 +2,7 @@
  * @file util.c
  * @author Onyx and Iris (code@onyxandiris.online)
  * @brief Utility functions.
- * @version 0.7.0
+ * @version 0.8.0
  * @date 2024-07-06
  *
  * @copyright Copyright (c) 2024
@@ -69,4 +69,16 @@ char *version_as_string(char *s, long v, int n)
          v4 = (v & 0x000000FF);
     snprintf(s, n, "%i.%i.%i.%i", (int)v1, (int)v2, (int)v3, (int)v4);
     return s;
+}
+
+/**
+ * @brief Is the current input a comment
+ *
+ * @param s Pointer to the current input
+ * @return true
+ * @return false
+ */
+bool is_comment(char *s)
+{
+    return s[0] == '#';
 }

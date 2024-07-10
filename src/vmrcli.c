@@ -2,7 +2,7 @@
  * @file vmrcli.c
  * @author Onyx and Iris (code@onyxandiris.online)
  * @brief A Voicemeeter Remote Command Line Interface
- * @version 0.7.0
+ * @version 0.8.0
  * @date 2024-07-06
  *
  * @copyright Copyright (c) 2024
@@ -21,17 +21,17 @@
 #include "log.h"
 #include "util.h"
 
-#define USAGE "Usage: .\\vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>\n" \
-              "Where: \n"                                                                     \
-              "\th: Prints the help message\n"                                                \
-              "\ti: Enable interactive mode\n"                                                \
-              "\tk: The kind of Voicemeeter (basic, banana, potato)\n"                        \
-              "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL\n"       \
-              "\tv: Enable extra console output (toggle, set messages)\n"                     \
-              "\tc: Load a user configuration (give the full file path)\n"                    \
-              "\tm: Launch the MacroButtons application\n"                                    \
+#define USAGE "Usage: .\\vmrcli.exe [-h] [-i|-I] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>\n" \
+              "Where: \n"                                                                        \
+              "\th: Prints the help message\n"                                                   \
+              "\ti: Enable interactive mode, use (-I) to disable the '>>' prompt\n"              \
+              "\tk: The kind of Voicemeeter (basic, banana, potato)\n"                           \
+              "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL\n"          \
+              "\tv: Enable extra console output (toggle, set messages)\n"                        \
+              "\tc: Load a user configuration (give the full file path)\n"                       \
+              "\tm: Launch the MacroButtons application\n"                                       \
               "\ts: Launch the StreamerView application"
-#define OPTSTR ":hk:msc:iD:v"
+#define OPTSTR ":hk:msc:iID:v"
 #define MAX_LINE 512
 
 /**
@@ -60,7 +60,7 @@ static bool vflag = false;
 
 static void usage(void);
 enum kind set_kind(char *kval);
-void interactive(PT_VMR vmr);
+void interactive(PT_VMR vmr, bool with_prompt);
 void parse_input(PT_VMR vmr, char *input);
 void parse_command(PT_VMR vmr, char *command);
 void get(PT_VMR vmr, char *command, struct result *res);
@@ -70,7 +70,8 @@ int main(int argc, char *argv[])
     bool iflag = false,
          mflag = false,
          sflag = false,
-         cflag = false;
+         cflag = false,
+         with_prompt = true;
     int opt;
     int dvalue;
     char *cvalue;
@@ -106,6 +107,9 @@ int main(int argc, char *argv[])
             cflag = true;
             cvalue = optarg;
             break;
+        case 'I':
+            with_prompt = false;
+            [[fallthrough]];
         case 'i':
             iflag = true;
             break;
@@ -174,7 +178,7 @@ int main(int argc, char *argv[])
     if (iflag)
     {
         puts("Interactive mode enabled. Enter 'Q' to exit.");
-        interactive(vmr);
+        interactive(vmr, with_prompt);
     }
     else
     {
@@ -231,11 +235,12 @@ enum kind set_kind(char *kval)
  *
  * @param vmr Pointer to the iVMR interface
  */
-void interactive(PT_VMR vmr)
+void interactive(PT_VMR vmr, bool with_prompt)
 {
     char input[MAX_LINE];
 
-    printf(">> ");
+    if (with_prompt)
+        printf(">> ");
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
         input[strcspn(input, "\n")] = 0;
@@ -245,12 +250,14 @@ void interactive(PT_VMR vmr)
         parse_input(vmr, input);
 
         memset(input, 0, MAX_LINE); /* reset input buffer */
-        printf(">> ");
+        if (with_prompt)
+            printf(">> ");
     }
 }
 
 /**
- * @brief Walks through each line split by " \t;," delimiters.
+ * @brief Returns early if input is a comment
+ * Walks through each line split by " \t;," delimiters.
  * Each token is passed to parse_command()
  *
  * @param vmr Pointer to the iVMR interface
@@ -258,6 +265,9 @@ void interactive(PT_VMR vmr)
  */
 void parse_input(PT_VMR vmr, char *input)
 {
+    if (is_comment(input))
+        return;
+
     char *token, *p;
 
     token = strtok_r(input, " \t;,", &p);

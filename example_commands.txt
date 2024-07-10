@@ -1,5 +1,14 @@
+# Strip 0
 strip[0].mute !strip[0].mute strip[0].mute strip[0].gain strip[0].label=podmic strip[0].label
+
+# Strip 1
 strip[1].mute=1 strip[1].mute strip[1].limit-=8
+
+# Strip 2
 strip[2].gain-=5 strip[2].comp+=4.8
+
+# Bus 0
 bus[0].label
+
+# Bus 1
 bus[1].gain-=5.8

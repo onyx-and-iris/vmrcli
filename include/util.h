@@ -11,5 +11,6 @@
 void remove_last_part_of_path(char *fullpath);
 char *kind_as_string(char *s, int kind, int n);
 char *version_as_string(char *s, long v, int n);
+bool is_comment(char *s);
 
 #endif /* __UTIL_H__ */

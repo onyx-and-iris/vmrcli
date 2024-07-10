@@ -13,13 +13,14 @@
 ## `Use`
 
 ```powershell
-.\vmrcli.exe [-h] [-i] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>
+.\vmrcli.exe [-h] [-i|-I] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>
 ```
 
 Where:
 
 - `h`: Prints the help message.
-- `i`: Enable interactive mode. If set, any api commands passed on the command line will be ignored.
+- `i`: Enable interactive mode, use (-I) to disable the '>>' prompt.
+  - If set, any api commands passed on the command line will be ignored.
 - `k`: The kind of Voicemeeter (basic, banana or potato). Use this to launch the GUI.
 - `D`: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL
 - `v`: Enable extra console output (toggle, set messages)
@@ -75,10 +76,12 @@ Scripts can be loaded from text files, for example in Powershell:
 You may also pipe a scripts contents to the CLI:
 
 ```powershell
-$(Get-Content .\example_commands.txt) | .\vmrcli.exe -D1 -i
+$(Get-Content .\example_commands.txt) | .\vmrcli.exe -D1 -I
 ```
 
 Multiple API commands can be in a single line, they may be separated by space, `;` or `,`.
+
+Lines starting with `#` will be interpreted as comments.
 
 ## `Build`
 
