@@ -82,3 +82,25 @@ bool is_comment(char *s)
 {
     return s[0] == '#';
 }
+
+/**
+ * @brief Searches the quickcommands array for a quickcommand
+ * corresponding to the command_key.
+ *
+ * @param command_key The key used to search for the quickcommand
+ * @param quickcommands Pointer to an array of quickcommands
+ * @param n The number of quickcommands
+ * @return struct quickcommand* Pointer to the found quickcommand
+ * May return NULL if quickcommand not found.
+ */
+struct quickcommand *command_in_quickcommands(const char *command_key, struct quickcommand *quickcommands, int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        if (strncmp(command_key, quickcommands[i].name, strlen(command_key)) == 0)
+        {
+            return &quickcommands[i];
+        }
+    }
+    return NULL;
+}
