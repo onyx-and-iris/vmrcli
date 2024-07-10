@@ -93,13 +93,13 @@ bool is_comment(char *s)
  * @return struct quickcommand* Pointer to the found quickcommand
  * May return NULL if quickcommand not found.
  */
-struct quickcommand *command_in_quickcommands(const char *command_key, struct quickcommand *quickcommands, int n)
+struct quickcommand *command_in_quickcommands(const char *command_key, const struct quickcommand *quickcommands, int n)
 {
     for (int i = 0; i < n; i++)
     {
         if (strncmp(command_key, quickcommands[i].name, strlen(command_key)) == 0)
         {
-            return &quickcommands[i];
+            return (struct quickcommand *)&quickcommands[i];
         }
     }
     return NULL;

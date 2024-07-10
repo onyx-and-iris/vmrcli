@@ -34,6 +34,7 @@
 #define OPTSTR ":hk:msc:iID:v"
 #define MAX_LINE 512
 #define COUNT_OF(x) (sizeof(x) / sizeof(x[0]))
+#define DELIMITERS " \t;,"
 
 /**
  * @enum The kind of values a get call may return.
@@ -56,13 +57,6 @@ struct result
         wchar_t s[MAX_LINE];
     } val;
 };
-
-struct quickcommand quickcommands[] = {
-    {.name = "lock", .fullcommand = "command.lock=1"},
-    {.name = "unlock", .fullcommand = "command.lock=0"},
-    {.name = "show", .fullcommand = "command.show=1"},
-    {.name = "hide", .fullcommand = "command.show=0"},
-    {.name = "restart", .fullcommand = "command.restart=1"}};
 
 static bool vflag = false;
 
@@ -278,11 +272,11 @@ void parse_input(PT_VMR vmr, char *input)
 
     char *token, *p;
 
-    token = strtok_r(input, " \t;,", &p);
+    token = strtok_r(input, DELIMITERS, &p);
     while (token != NULL)
     {
         parse_command(vmr, token);
-        token = strtok_r(NULL, " \t;,", &p);
+        token = strtok_r(NULL, DELIMITERS, &p);
     }
 }
 
@@ -297,6 +291,13 @@ void parse_input(PT_VMR vmr, char *input)
 void parse_command(PT_VMR vmr, char *command)
 {
     log_debug("Parsing %s", command);
+
+    static const struct quickcommand quickcommands[] = {
+        {.name = "lock", .fullcommand = "command.lock=1"},
+        {.name = "unlock", .fullcommand = "command.lock=0"},
+        {.name = "show", .fullcommand = "command.show=1"},
+        {.name = "hide", .fullcommand = "command.show=0"},
+        {.name = "restart", .fullcommand = "command.restart=1"}};
 
     struct quickcommand *qc_ptr = command_in_quickcommands(command, quickcommands, (int)COUNT_OF(quickcommands));
     if (qc_ptr != NULL)
