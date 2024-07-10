@@ -48,6 +48,18 @@ Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then prin
 .\vmrcli.exe -kbanana -D1 strip[0].label=podmic strip[2].label
 ```
 
+#### `Quick Commands`
+
+A short list of quick commands are available:
+
+- `lock`: command.lock=1
+- `unlock`: command.lock=0
+- `show`: command.show=1
+- `hide`: command.show=0
+- `restart`: command.restart=1
+
+They may be used in direct or interactive mode.
+
 ## `Interactive Mode`
 
 Running the following command in Powershell:
