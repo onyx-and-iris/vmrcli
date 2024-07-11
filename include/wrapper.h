@@ -11,7 +11,7 @@
 #include <stdbool.h>
 #include "voicemeeterRemote.h"
 
-enum kind
+enum kind : int
 {
     UNKNOWN = -1,
     BASIC = 1,

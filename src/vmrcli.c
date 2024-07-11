@@ -39,7 +39,7 @@
 /**
  * @enum The kind of values a get call may return.
  */
-enum
+enum restype : int
 {
     FLOAT_T,
     STRING_T,
@@ -50,7 +50,7 @@ enum
  */
 struct result
 {
-    int type;
+    enum restype type;
     union val
     {
         float f;
@@ -60,7 +60,7 @@ struct result
 
 static bool vflag = false;
 
-static void usage(void);
+static void usage();
 enum kind set_kind(char *kval);
 void interactive(PT_VMR vmr, bool with_prompt);
 void parse_input(PT_VMR vmr, char *input);
