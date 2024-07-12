@@ -33,7 +33,7 @@
               "\ts: Launch the StreamerView application"
 #define OPTSTR ":hk:msc:iID:v"
 #define MAX_LINE 4096 /* Size of the input buffer */
-#define RES_SZ 512    /* Size of the buffer passed to VBVMR_SetParameterStringA */
+#define RES_SZ 512    /* Size of the buffer passed to VBVMR_GetParameterStringW */
 #define COUNT_OF(x) (sizeof(x) / sizeof(x[0]))
 #define DELIMITERS " \t;,"
 
