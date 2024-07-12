@@ -32,7 +32,8 @@
               "\tm: Launch the MacroButtons application\n"                                       \
               "\ts: Launch the StreamerView application"
 #define OPTSTR ":hk:msc:iID:v"
-#define MAX_LINE 512
+#define MAX_LINE 4096 /* Size of the input buffer */
+#define RES_SZ 512    /* Size of the buffer passed to VBVMR_SetParameterStringA */
 #define COUNT_OF(x) (sizeof(x) / sizeof(x[0]))
 #define DELIMITERS " \t;,"
 
@@ -54,7 +55,7 @@ struct result
     union val
     {
         float f;
-        wchar_t s[MAX_LINE];
+        wchar_t s[RES_SZ];
     } val;
 };
 
@@ -240,18 +241,19 @@ enum kind set_kind(char *kval)
 void interactive(PT_VMR vmr, bool with_prompt)
 {
     char input[MAX_LINE];
+    size_t len;
 
     if (with_prompt)
         printf(">> ");
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
         input[strcspn(input, "\n")] = 0;
-        if (strlen(input) == 1 && toupper(input[0]) == 'Q')
+        if ((len = strlen(input)) == 1 && toupper(input[0]) == 'Q')
             break;
 
         parse_input(vmr, input);
+        memset(input, 0, len); /* reset input buffer */
 
-        memset(input, 0, MAX_LINE); /* reset input buffer */
         if (with_prompt)
             printf(">> ");
     }
