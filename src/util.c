@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <windows.h>
 #include "wrapper.h"
 #include "util.h"
 
@@ -103,4 +104,17 @@ struct quickcommand *command_in_quickcommands(const char *command_key, const str
         }
     }
     return NULL;
+}
+
+/**
+ * @brief Continuously polls an is_{}dirty function until it clears.
+ *
+ * @param vmr Pointer to the iVMR interface
+ * @param f Pointer to a polling function
+ */
+void clear(PT_VMR vmr, bool (*f)(PT_VMR))
+{
+    Sleep(30);
+    while (f(vmr))
+        Sleep(1);
 }

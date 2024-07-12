@@ -156,10 +156,3 @@ long macrobutton_setstatus(PT_VMR vmr, long n, float val, long mode)
     log_trace("VBVMR_MacroButton_SetStatus(%ld, %d, %ld)", n, (int)val, mode);
     return vmr->VBVMR_MacroButton_SetStatus(n, val, mode);
 }
-
-void clear(PT_VMR vmr, bool (*f)(PT_VMR))
-{
-    Sleep(30);
-    while (f(vmr))
-        Sleep(1);
-}
