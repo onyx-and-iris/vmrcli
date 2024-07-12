@@ -41,6 +41,6 @@ bool is_mdirty(PT_VMR vmr);
 long macrobutton_getstatus(PT_VMR vmr, long n, float *val, long mode);
 long macrobutton_setstatus(PT_VMR vmr, long n, float val, long mode);
 
-void clear_dirty(PT_VMR vmr);
+void clear(PT_VMR vmr, bool (*f)(PT_VMR));
 
 #endif /* __WRAPPER_H__ */

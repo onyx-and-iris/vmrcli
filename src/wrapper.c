@@ -61,7 +61,7 @@ long login(PT_VMR vmr, int kind)
 
     if (rep == 0)
     {
-        clear_dirty(vmr);
+        clear(vmr, is_pdirty);
     }
     return rep;
 }
@@ -157,9 +157,9 @@ long macrobutton_setstatus(PT_VMR vmr, long n, float val, long mode)
     return vmr->VBVMR_MacroButton_SetStatus(n, val, mode);
 }
 
-void clear_dirty(PT_VMR vmr)
+void clear(PT_VMR vmr, bool (*f)(PT_VMR))
 {
     Sleep(30);
-    while (is_pdirty(vmr))
+    while (f(vmr))
         Sleep(1);
 }

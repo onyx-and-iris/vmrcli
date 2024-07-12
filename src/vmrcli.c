@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
         log_info("Profile %s loaded", cvalue);
         set_parameter_string(vmr, "command.load", cvalue);
         Sleep(300);
-        clear_dirty(vmr);
+        clear(vmr, is_pdirty);
     }
 
     if (iflag)
@@ -373,7 +373,7 @@ void parse_command(PT_VMR vmr, char *command)
  */
 void get(PT_VMR vmr, char *command, struct result *res)
 {
-    clear_dirty(vmr);
+    clear(vmr, is_pdirty);
     if (get_parameter_float(vmr, command, &res->val.f) != 0)
     {
         res->type = STRING_T;
