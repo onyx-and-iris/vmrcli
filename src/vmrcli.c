@@ -237,6 +237,7 @@ enum kind set_kind(char *kval)
  * Each line is passed to parse_input()
  *
  * @param vmr Pointer to the iVMR interface
+ * @param with_prompt If true, prints the interactive prompt '>>'
  */
 void interactive(PT_VMR vmr, bool with_prompt)
 {
