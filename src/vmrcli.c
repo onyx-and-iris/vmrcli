@@ -11,10 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <getopt.h>
-#include <string.h>
-#include <ctype.h>
 #include <windows.h>
 #include "ivmr.h"
 #include "wrapper.h"
@@ -47,7 +44,9 @@ enum restype : int
 };
 
 /**
- * @struct A struct holding the result of a get call.
+ * @struct A struct used for:
+ * - tracking the type of value stored
+ * - storing the result of a get call
  */
 struct result
 {
@@ -63,10 +62,10 @@ static bool vflag = false;
 
 static void usage();
 enum kind set_kind(char *kval);
-void interactive(PT_VMR vmr, bool with_prompt);
-void parse_input(PT_VMR vmr, char *input);
-void parse_command(PT_VMR vmr, char *command);
-void get(PT_VMR vmr, char *command, struct result *res);
+static void interactive(PT_VMR vmr, bool with_prompt);
+static void parse_input(PT_VMR vmr, char *input);
+static void parse_command(PT_VMR vmr, char *command);
+static void get(PT_VMR vmr, char *command, struct result *res);
 
 int main(int argc, char *argv[])
 {
@@ -150,30 +149,37 @@ int main(int argc, char *argv[])
     }
 
     PT_VMR vmr = create_interface();
+    if (vmr == NULL)
+    {
+        exit(EXIT_FAILURE);
+    }
 
     long rep = login(vmr, kind);
     if (rep != 0)
     {
-        log_fatal("Error logging into the Voicemeeter API");
+        if (rep == -2)
+            log_fatal("Timeout logging into the API.");
+        else
+            log_fatal("Eror logging into the Voicemeeter API");
         exit(EXIT_FAILURE);
     }
 
     if (mflag)
     {
-        log_info("MacroButtons app launched");
         run_voicemeeter(vmr, MACROBUTTONS);
+        log_info("MacroButtons app launched");
     }
 
     if (sflag)
     {
-        log_info("StreamerView app launched");
         run_voicemeeter(vmr, STREAMERVIEW);
+        log_info("StreamerView app launched");
     }
 
     if (cflag)
     {
-        log_info("Profile %s loaded", cvalue);
         set_parameter_string(vmr, "command.load", cvalue);
+        log_info("Profile %s loaded", cvalue);
         Sleep(300);
         clear(vmr, is_pdirty);
     }
@@ -199,12 +205,13 @@ int main(int argc, char *argv[])
     }
     else
     {
+        log_info("Successfully logged out of the Voicemeeter API");
         return EXIT_SUCCESS;
     }
 }
 
 /**
- * @brief prints the help message
+ * @brief Prints the help message
  */
 static void usage()
 {
@@ -239,7 +246,7 @@ enum kind set_kind(char *kval)
  * @param vmr Pointer to the iVMR interface
  * @param with_prompt If true, prints the interactive prompt '>>'
  */
-void interactive(PT_VMR vmr, bool with_prompt)
+static void interactive(PT_VMR vmr, bool with_prompt)
 {
     char input[MAX_LINE];
     size_t len;
@@ -268,7 +275,7 @@ void interactive(PT_VMR vmr, bool with_prompt)
  * @param vmr Pointer to the iVMR interface
  * @param input Each input line, from stdin or CLI args
  */
-void parse_input(PT_VMR vmr, char *input)
+static void parse_input(PT_VMR vmr, char *input)
 {
     if (is_comment(input))
         return;
@@ -291,7 +298,7 @@ void parse_input(PT_VMR vmr, char *input)
  * @param vmr Pointer to the iVMR interface
  * @param command Each token from the input line as its own command string
  */
-void parse_command(PT_VMR vmr, char *command)
+static void parse_command(PT_VMR vmr, char *command)
 {
     log_debug("Parsing %s", command);
 
@@ -369,9 +376,9 @@ void parse_command(PT_VMR vmr, char *command)
  *
  * @param vmr Pointer to the iVMR interface
  * @param command A parsed 'get' command as a string
- * @param res A struct holding the result of the API call.
+ * @param res Pointer to a struct holding the result of the API call.
  */
-void get(PT_VMR vmr, char *command, struct result *res)
+static void get(PT_VMR vmr, char *command, struct result *res)
 {
     clear(vmr, is_pdirty);
     if (get_parameter_float(vmr, command, &res->val.f) != 0)
