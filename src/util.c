@@ -9,18 +9,14 @@
  * https://github.com/onyx-and-iris/vmrcli/blob/main/LICENSE
  */
 
-#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
-#include <windows.h>
-#include "wrapper.h"
 #include "util.h"
 
 /**
  * @brief Removes the last part of a path
  *
- * @param fullpath The entire path
+ * @param fullpath
  */
 void remove_last_part_of_path(char *fullpath)
 {
@@ -35,7 +31,7 @@ void remove_last_part_of_path(char *fullpath)
 /**
  * @brief Converts Voicemeeter's kind into a string.
  *
- * @param s Pointer to a character buffer
+ * @param s Pointer to a character buffer receiving the kind
  * @param kind The kind of Voicemeeter.
  * @param n Maximum number of characters to be written to the buffer
  * @return char* String representation of the kind of Voicemeeter.
@@ -57,7 +53,7 @@ char *kind_as_string(char *s, int kind, int n)
 /**
  * @brief Converts Voicemeeter's version into a string.
  *
- * @param s Pointer to a character buffer
+ * @param s Pointer to a character buffer receiving the version
  * @param v Unprocessed version as a long int
  * @param n Maximum number of characters to be written to the buffer
  * @return char* String representation of the Voicemeeter version
@@ -104,17 +100,4 @@ struct quickcommand *command_in_quickcommands(const char *command_key, const str
         }
     }
     return NULL;
-}
-
-/**
- * @brief Continuously polls an is_{}dirty function until it clears.
- *
- * @param vmr Pointer to the iVMR interface
- * @param f Pointer to a polling function
- */
-void clear(PT_VMR vmr, bool (*f)(PT_VMR))
-{
-    Sleep(30);
-    while (f(vmr))
-        Sleep(1);
 }

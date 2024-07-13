@@ -19,6 +19,5 @@ char *kind_as_string(char *s, int kind, int n);
 char *version_as_string(char *s, long v, int n);
 bool is_comment(char *s);
 struct quickcommand *command_in_quickcommands(const char *command, const struct quickcommand *quickcommands, int n);
-void clear(PT_VMR vmr, bool (*f)(PT_VMR));
 
 #endif /* __UTIL_H__ */
