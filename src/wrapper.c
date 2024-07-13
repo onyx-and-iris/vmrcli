@@ -2,7 +2,7 @@
  * @file wrapper.c
  * @author Onyx and Iris (code@onyxandiris.online)
  * @brief Provides public functions that wrap the iVMR calls
- * @version 0.9.0
+ * @version 0.10.0
  * @date 2024-07-06
  *
  * @copyright Copyright (c) 2024

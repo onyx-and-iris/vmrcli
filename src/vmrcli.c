@@ -2,7 +2,7 @@
  * @file vmrcli.c
  * @author Onyx and Iris (code@onyxandiris.online)
  * @brief A Voicemeeter Remote Command Line Interface
- * @version 0.9.0
+ * @version 0.10.0
  * @date 2024-07-06
  *
  * @copyright Copyright (c) 2024
@@ -61,7 +61,7 @@ struct result
 static bool vflag = false;
 
 static void usage();
-enum kind set_kind(char *kval);
+static enum kind set_kind(char *kval);
 static void interactive(PT_VMR vmr, bool with_prompt);
 static void parse_input(PT_VMR vmr, char *input);
 static void parse_command(PT_VMR vmr, char *command);
@@ -226,7 +226,7 @@ static void usage()
  * @param kval Value of the -k flag
  * @return enum kind
  */
-enum kind set_kind(char *kval)
+static enum kind set_kind(char *kval)
 {
     if (strcmp(kval, "basic") == 0)
         return sizeof(void *) == 8 ? BASICX64 : BASIC;
