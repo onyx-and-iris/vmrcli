@@ -13,8 +13,6 @@
  * https://github.com/onyx-and-iris/vmrcli/blob/main/LICENSE
  */
 
-#include <stdbool.h>
-#include <stdio.h>
 #include <windows.h>
 #include "ivmr.h"
 #include "util.h"
@@ -36,6 +34,7 @@ static bool registry_get_voicemeeter_folder(char *szDir);
  * @brief Create an interface object
  *
  * @return PT_VMR Pointer to the iVMR interface
+ * May return NULL if the interface fails to initialize
  */
 PT_VMR create_interface()
 {
@@ -48,13 +47,12 @@ PT_VMR create_interface()
         if (rep == -100)
         {
             log_fatal("Voicemeeter is not installed");
-            exit(EXIT_FAILURE);
         }
         else
         {
-            log_fatal("Error loading Voicemeeter dll with code %d\n", rep);
-            exit(EXIT_FAILURE);
+            log_fatal("Error loading Voicemeeter dll with code %d", rep);
         }
+        return NULL;
     }
 
     return vmr;
