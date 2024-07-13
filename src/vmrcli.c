@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
         if (rep == -2)
             log_fatal("Timeout logging into the API.");
         else
-            log_fatal("Eror logging into the Voicemeeter API");
+            log_fatal("Error logging into the Voicemeeter API");
         exit(EXIT_FAILURE);
     }
 
