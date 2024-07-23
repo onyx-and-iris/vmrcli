@@ -1,5 +1,5 @@
 /**
- * @file ivmr.c
+ * @file interface.c
  * @author Vincent Burel, Onyx and Iris (code@onyxandiris.online)
  * @brief Functions for initializing the iVMR interface.
  * Defines a single public function that returns a pointer to the interface.
@@ -14,7 +14,7 @@
  */
 
 #include <windows.h>
-#include "ivmr.h"
+#include "interface.h"
 #include "util.h"
 #include "log.h"
 
@@ -25,10 +25,8 @@
 #define PRAGMA_Pop \
     _Pragma("GCC diagnostic pop")
 
-static T_VBVMR_INTERFACE iVMR;
-
 static long initialize_dll_interfaces(PT_VMR vmr);
-static bool registry_get_voicemeeter_folder(char *szDir);
+static bool registry_get_voicemeeter_folder(char *dll_fullpath);
 
 /**
  * @brief Create an interface object
@@ -38,10 +36,14 @@ static bool registry_get_voicemeeter_folder(char *szDir);
  */
 PT_VMR create_interface()
 {
-    PT_VMR vmr = &iVMR;
-    int rep;
+    PT_VMR vmr = malloc(sizeof(T_VBVMR_INTERFACE));
+    if (vmr == NULL)
+    {
+        log_error("malloc failed to allocate memory");
+        return NULL;
+    }
 
-    rep = initialize_dll_interfaces(vmr);
+    LONG rep = initialize_dll_interfaces(vmr);
     if (rep < 0)
     {
         if (rep == -100)
@@ -52,7 +54,8 @@ PT_VMR create_interface()
         {
             log_fatal("Error loading Voicemeeter dll with code %d", rep);
         }
-        return NULL;
+        free(vmr);
+        vmr = NULL;
     }
 
     return vmr;
@@ -61,26 +64,30 @@ PT_VMR create_interface()
 /*******************************************************************************/
 /**                                GET DLL INTERFACE                          **/
 /*******************************************************************************/
+#define DLL_FULLPATH_SZ 1024
+#define DLL64_NAME "\\VoicemeeterRemote64.dll"
+#define DLL32_NAME "\\VoicemeeterRemote.dll"
+
 static long initialize_dll_interfaces(PT_VMR vmr)
 {
     HMODULE G_H_Module = NULL;
-    char szDllName[1024];
+    char dll_fullpath[DLL_FULLPATH_SZ];
     memset(vmr, 0, sizeof(T_VBVMR_INTERFACE));
 
     // get Voicemeeter installation directory
-    if (!registry_get_voicemeeter_folder(szDllName))
+    if (!registry_get_voicemeeter_folder(dll_fullpath))
     {
         // Voicemeeter not installed
         return -100;
     }
     // use right dll according to O/S type
     if (sizeof(void *) == 8)
-        strcat(szDllName, "\\VoicemeeterRemote64.dll");
+        strncat(dll_fullpath, DLL64_NAME, DLL_FULLPATH_SZ - strlen(DLL64_NAME) - 1);
     else
-        strcat(szDllName, "\\VoicemeeterRemote.dll");
+        strncat(dll_fullpath, DLL32_NAME, DLL_FULLPATH_SZ - strlen(DLL32_NAME) - 1);
 
     // Load Dll
-    G_H_Module = LoadLibrary(szDllName);
+    G_H_Module = LoadLibrary(dll_fullpath);
     if (G_H_Module == NULL)
         return -101;
 
@@ -125,33 +132,33 @@ static long initialize_dll_interfaces(PT_VMR vmr)
     if (vmr->VBVMR_Logout == NULL)
         return -2;
     if (vmr->VBVMR_RunVoicemeeter == NULL)
-        return -2;
-    if (vmr->VBVMR_GetVoicemeeterType == NULL)
         return -3;
-    if (vmr->VBVMR_GetVoicemeeterVersion == NULL)
+    if (vmr->VBVMR_GetVoicemeeterType == NULL)
         return -4;
-    if (vmr->VBVMR_IsParametersDirty == NULL)
+    if (vmr->VBVMR_GetVoicemeeterVersion == NULL)
         return -5;
-    if (vmr->VBVMR_GetParameterFloat == NULL)
+    if (vmr->VBVMR_IsParametersDirty == NULL)
         return -6;
-    if (vmr->VBVMR_GetParameterStringA == NULL)
+    if (vmr->VBVMR_GetParameterFloat == NULL)
         return -7;
-    if (vmr->VBVMR_GetParameterStringW == NULL)
+    if (vmr->VBVMR_GetParameterStringA == NULL)
         return -8;
-    if (vmr->VBVMR_GetLevel == NULL)
+    if (vmr->VBVMR_GetParameterStringW == NULL)
         return -9;
-    if (vmr->VBVMR_SetParameterFloat == NULL)
+    if (vmr->VBVMR_GetLevel == NULL)
         return -10;
-    if (vmr->VBVMR_SetParameters == NULL)
+    if (vmr->VBVMR_SetParameterFloat == NULL)
         return -11;
-    if (vmr->VBVMR_SetParametersW == NULL)
+    if (vmr->VBVMR_SetParameters == NULL)
         return -12;
-    if (vmr->VBVMR_SetParameterStringA == NULL)
+    if (vmr->VBVMR_SetParametersW == NULL)
         return -13;
-    if (vmr->VBVMR_SetParameterStringW == NULL)
+    if (vmr->VBVMR_SetParameterStringA == NULL)
         return -14;
-    if (vmr->VBVMR_GetMidiMessage == NULL)
+    if (vmr->VBVMR_SetParameterStringW == NULL)
         return -15;
+    if (vmr->VBVMR_GetMidiMessage == NULL)
+        return -16;
 
     if (vmr->VBVMR_Output_GetDeviceNumber == NULL)
         return -30;
@@ -180,50 +187,48 @@ static long initialize_dll_interfaces(PT_VMR vmr)
 /**                           GET VOICEMEETER DIRECTORY                       **/
 /*******************************************************************************/
 
+#define INSTALLER_DIR_KEY "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
 #define INSTALLER_UNINST_KEY "VB:Voicemeeter {17359A74-1236-5467}"
 
 #ifndef KEY_WOW64_32KEY
 #define KEY_WOW64_32KEY 0x0200
 #endif
 
-static bool registry_get_voicemeeter_folder(char *szDir)
-{
-    char szKey[256];
-    char sss[1024];
-    DWORD nnsize = 1024;
-    HKEY hkResult;
-    LONG rep;
-    DWORD pptype = REG_SZ;
-    sss[0] = 0;
-    const char uninstDirKey[] = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall";
+#define UNINSTALL_KEY_SZ 256
+#define UNINSTALL_PATH_SZ 1024
 
+static bool registry_get_voicemeeter_folder(char *dll_fullpath)
+{
     // build Voicemeeter uninstallation key
-    strcpy(szKey, uninstDirKey);
-    strcat(szKey, "\\");
-    strcat(szKey, INSTALLER_UNINST_KEY);
+    char uninstall_key[UNINSTALL_KEY_SZ];
+    snprintf(uninstall_key, UNINSTALL_KEY_SZ, "%s\\%s", INSTALLER_DIR_KEY, INSTALLER_UNINST_KEY);
 
     // open key
-    rep = RegOpenKeyEx(HKEY_LOCAL_MACHINE, szKey, 0, KEY_READ, &hkResult);
+    HKEY result;
+    LONG rep = RegOpenKeyEx(HKEY_LOCAL_MACHINE, uninstall_key, 0, KEY_READ, &result);
     if (rep != ERROR_SUCCESS)
     {
         // if not present we consider running in 64bit mode and force to read 32bit registry
-        rep = RegOpenKeyEx(HKEY_LOCAL_MACHINE, szKey, 0, KEY_READ | KEY_WOW64_32KEY, &hkResult);
+        rep = RegOpenKeyEx(HKEY_LOCAL_MACHINE, uninstall_key, 0, KEY_READ | KEY_WOW64_32KEY, &result);
     }
     if (rep != ERROR_SUCCESS)
         return false;
+
     // read uninstall path from registry
-    rep = RegQueryValueEx(hkResult, "UninstallString", 0, &pptype, (unsigned char *)sss, &nnsize);
-    RegCloseKey(hkResult);
+    DWORD pptype = REG_SZ;
+    DWORD len_uninstall_path = UNINSTALL_PATH_SZ;
+    char uninstall_path[UNINSTALL_PATH_SZ] = {0};
+    rep = RegQueryValueEx(result, "UninstallString", 0, &pptype, (unsigned char *)uninstall_path, &len_uninstall_path);
+    RegCloseKey(result);
 
     if (pptype != REG_SZ)
         return false;
     if (rep != ERROR_SUCCESS)
         return false;
+
     // remove name to get the path only
-    remove_last_part_of_path(sss);
-    if (nnsize > 512)
-        nnsize = 512;
-    strncpy(szDir, sss, nnsize);
+    remove_last_part_of_path(uninstall_path);
+    snprintf(dll_fullpath, DLL_FULLPATH_SZ, uninstall_path);
 
     return true;
 }
