@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <getopt.h>
 #include <windows.h>
-#include "ivmr.h"
+#include "interface.h"
 #include "wrapper.h"
 #include "log.h"
 #include "util.h"
@@ -60,6 +60,7 @@ struct result
 
 static bool vflag = false;
 
+static void terminate(PT_VMR vmr, char *msg);
 static void usage();
 static enum kind set_kind(char *kval);
 static void interactive(PT_VMR vmr, bool with_prompt);
@@ -158,10 +159,9 @@ int main(int argc, char *argv[])
     if (rep != 0)
     {
         if (rep == -2)
-            log_fatal("Timeout logging into the API.");
+            terminate(vmr, "Timeout logging into the API.");
         else
-            log_fatal("Error logging into the Voicemeeter API");
-        exit(EXIT_FAILURE);
+            terminate(vmr, "Error logging into the Voicemeeter API");
     }
 
     if (mflag)
@@ -200,14 +200,25 @@ int main(int argc, char *argv[])
     rep = logout(vmr);
     if (rep != 0)
     {
-        log_fatal("Error logging out of the Voicemeeter API");
-        return EXIT_FAILURE;
+        terminate(vmr, "Error logging out of the Voicemeeter API");
     }
-    else
-    {
-        log_info("Successfully logged out of the Voicemeeter API");
-        return EXIT_SUCCESS;
-    }
+
+    log_info("Successfully logged out of the Voicemeeter API");
+    free(vmr);
+    return EXIT_SUCCESS;
+}
+
+/**
+ * @brief Write fatal error log, free dyn allocated memory then exit
+ *
+ * @param vmr Pointer to the iVMR interface
+ * @param msg Fatal error message
+ */
+static void terminate(PT_VMR vmr, char *msg)
+{
+    log_fatal(msg);
+    free(vmr);
+    exit(EXIT_FAILURE);
 }
 
 /**
