@@ -240,11 +240,11 @@ static void usage()
 static enum kind set_kind(char *kval)
 {
     if (strcmp(kval, "basic") == 0)
-        return sizeof(void *) == 8 ? BASICX64 : BASIC;
+        return IS_64_BIT ? BASICX64 : BASIC;
     else if (strcmp(kval, "banana") == 0)
-        return sizeof(void *) == 8 ? BANANAX64 : BANANA;
+        return IS_64_BIT ? BANANAX64 : BANANA;
     else if (strcmp(kval, "potato") == 0)
-        return sizeof(void *) == 8 ? POTATOX64 : POTATO;
+        return IS_64_BIT ? POTATOX64 : POTATO;
     else
         return UNKNOWN;
 }

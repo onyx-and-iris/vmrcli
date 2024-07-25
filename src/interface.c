@@ -81,7 +81,7 @@ static long initialize_dll_interfaces(PT_VMR vmr)
         return -100;
     }
     // use right dll according to O/S type
-    if (sizeof(void *) == 8)
+    if (IS_64_BIT)
         strncat(dll_fullpath, DLL64_NAME, DLL_FULLPATH_SZ - strlen(DLL64_NAME) - 1);
     else
         strncat(dll_fullpath, DLL32_NAME, DLL_FULLPATH_SZ - strlen(DLL32_NAME) - 1);

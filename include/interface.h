@@ -10,6 +10,8 @@
 
 #include "VoicemeeterRemote.h"
 
+#define IS_64_BIT sizeof(void *) == 8
+
 PT_VMR create_interface();
 
 #endif /* __IVMR_H__ */
