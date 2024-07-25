@@ -266,12 +266,11 @@ static void interactive(PT_VMR vmr, bool with_prompt)
         printf(">> ");
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
-        input[strcspn(input, "\n")] = 0;
-        if ((len = strlen(input)) == 1 && toupper(input[0]) == 'Q')
+        input[(len = strcspn(input, "\n"))] = 0;
+        if (len == 1 && toupper(input[0]) == 'Q')
             break;
 
         parse_input(vmr, input);
-        memset(input, 0, len); /* reset input buffer */
 
         if (with_prompt)
             printf(">> ");
