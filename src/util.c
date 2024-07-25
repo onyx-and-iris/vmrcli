@@ -92,7 +92,7 @@ bool is_comment(char *s)
  */
 struct quickcommand *command_in_quickcommands(const char *command_key, const struct quickcommand *quickcommands, int n)
 {
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < n; ++i)
     {
         if (strcmp(command_key, quickcommands[i].name) == 0)
         {

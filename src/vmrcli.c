@@ -191,7 +191,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        for (int i = optind; i < argc; i++)
+        for (int i = optind; i < argc; ++i)
         {
             parse_input(vmr, argv[i]);
         }
