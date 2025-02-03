@@ -31,19 +31,19 @@ tasks:
     deps: [compile]
     cmds:
       - powershell -Command "if (!(Test-Path -Path '{{.BIN_DIR}}')) { New-Item -ItemType Directory -Path '{{.BIN_DIR}}' }"
-      - powershell -Command "{{.CC}} {{.LDFLAGS}} obj/*.o {{.LDLIBS}} -o bin/{{.program}}.exe"
+      - powershell -Command "{{.CC}} {{.LDFLAGS}} {{.OBJ_DIR}}/*.o {{.LDLIBS}} -o {{.BIN_DIR}}/{{.program}}.exe"
     sources:
-      - obj/**
+      - '{{.OBJ_DIR}}/**'
     generates:
-      - bin/{{.program}}.exe
+      - '{{.BIN_DIR}}/{{.program}}.exe'
 
   compile:
     desc: "Compile all files in src/ and include/ for Windows"
     cmds:
       - powershell -Command "if (!(Test-Path -Path '{{.OBJ_DIR}}')) { New-Item -ItemType Directory -Path '{{.OBJ_DIR}}' }"
-      - powershell -Command "Get-ChildItem -Path 'src' -Filter '*.c' | ForEach-Object { \$_.Name -replace '\.c$', '' } | ForEach-Object { {{.CC}} {{.CPPFLAGS}} {{.CFLAGS}} -c src/\$_.c -Iinclude -o obj/\$_.o }"
+      - powershell -Command "Get-ChildItem -Path 'src' -Filter '*.c' | ForEach-Object { \$_.Name -replace '\.c$', '' } | ForEach-Object { {{.CC}} {{.CPPFLAGS}} {{.CFLAGS}} -c {{.SRC_DIR}}/\$_.c -Iinclude -o {{.OBJ_DIR}}/\$_.o }"
     sources:
-      - src/**
+      - '{{.SRC_DIR}}/**'
       - include/**
     generates:
       - obj/**
