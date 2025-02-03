@@ -46,7 +46,7 @@ tasks:
       - '{{.SRC_DIR}}/**'
       - include/**
     generates:
-      - obj/**
+      - '{{.OBJ_DIR}}/**'
 
   clean:
     desc: "Remove all files in obj/ and bin/"
