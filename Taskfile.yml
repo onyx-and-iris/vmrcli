@@ -51,5 +51,5 @@ tasks:
   clean:
     desc: "Remove all files in obj/ and bin/"
     cmds:
-      - powershell -Command "Remove-Item -Path 'obj' -Recurse -Force"
-      - powershell -Command "Remove-Item -Path 'bin' -Recurse -Force"
+      - powershell -Command "Remove-Item -Path '{{.OBJ_DIR}}' -Recurse -Force"
+      - powershell -Command "Remove-Item -Path '{{.BIN_DIR}}' -Recurse -Force"
