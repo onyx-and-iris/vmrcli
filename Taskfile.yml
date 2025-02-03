@@ -9,10 +9,11 @@ vars:
   CC: gcc
 
   SRC_DIR: src
+  INC_DIR: include
   OBJ_DIR: obj
   BIN_DIR: bin
 
-  CPPFLAGS: -Iinclude -MMD -MP {{if eq .LOG_USE_COLOR "yes"}}-DLOG_USE_COLOR{{end}}
+  CPPFLAGS: -I{{.INC_DIR}} -MMD -MP {{if eq .LOG_USE_COLOR "yes"}}-DLOG_USE_COLOR{{end}}
 
   CFLAGS: -O -Wall -W -pedantic -ansi -std=c2x
   LDFLAGS: -Llib
@@ -55,10 +56,10 @@ tasks:
         {{.SHELL}} -Command 
         "Get-ChildItem -Path '{{.SRC_DIR}}' -Filter '*.c' | 
         ForEach-Object { \$_.Name -replace '\.c$', '' } | 
-        ForEach-Object { {{.CC}} {{.CPPFLAGS}} {{.CFLAGS}} -c {{.SRC_DIR}}/\$_.c -Iinclude -o {{.OBJ_DIR}}/\$_.o }"
+        ForEach-Object { {{.CC}} {{.CPPFLAGS}} {{.CFLAGS}} -c {{.SRC_DIR}}/\$_.c -o {{.OBJ_DIR}}/\$_.o }"
     sources:
       - '{{.SRC_DIR}}/**'
-      - include/**
+      - '{{.INC_DIR}}/**'
     generates:
       - '{{.OBJ_DIR}}/**'
 
