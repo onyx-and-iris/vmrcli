@@ -3,7 +3,8 @@ version: '3'
 dotenv: [ '.env' ]
 
 vars:
-  program: vmrcli
+  PROGRAM: vmrcli
+  SHELL: powershell
 
   CC: gcc
 
@@ -30,18 +31,31 @@ tasks:
     desc: "Link all files in obj/ for Windows"
     deps: [compile]
     cmds:
-      - powershell -Command "if (!(Test-Path -Path '{{.BIN_DIR}}')) { New-Item -ItemType Directory -Path '{{.BIN_DIR}}' }"
-      - powershell -Command "{{.CC}} {{.LDFLAGS}} {{.OBJ_DIR}}/*.o {{.LDLIBS}} -o {{.BIN_DIR}}/{{.program}}.exe"
+      - >
+        {{.SHELL}} -Command 
+        "if (!(Test-Path -Path '{{.BIN_DIR}}')) { 
+          New-Item -ItemType Directory -Path '{{.BIN_DIR}}' 
+        }"
+      - >
+        {{.SHELL}} -Command "{{.CC}} {{.LDFLAGS}} {{.OBJ_DIR}}/*.o {{.LDLIBS}} -o {{.BIN_DIR}}/{{.PROGRAM}}.exe"
     sources:
       - '{{.OBJ_DIR}}/**'
     generates:
-      - '{{.BIN_DIR}}/{{.program}}.exe'
+      - '{{.BIN_DIR}}/{{.PROGRAM}}.exe'
 
   compile:
     desc: "Compile all files in src/ and include/ for Windows"
     cmds:
-      - powershell -Command "if (!(Test-Path -Path '{{.OBJ_DIR}}')) { New-Item -ItemType Directory -Path '{{.OBJ_DIR}}' }"
-      - powershell -Command "Get-ChildItem -Path 'src' -Filter '*.c' | ForEach-Object { \$_.Name -replace '\.c$', '' } | ForEach-Object { {{.CC}} {{.CPPFLAGS}} {{.CFLAGS}} -c {{.SRC_DIR}}/\$_.c -Iinclude -o {{.OBJ_DIR}}/\$_.o }"
+      - >
+        {{.SHELL}} -Command 
+        "if (!(Test-Path -Path '{{.OBJ_DIR}}')) { 
+          New-Item -ItemType Directory -Path '{{.OBJ_DIR}}' 
+        }"
+      - >
+        {{.SHELL}} -Command 
+        "Get-ChildItem -Path '{{.SRC_DIR}}' -Filter '*.c' | 
+        ForEach-Object { \$_.Name -replace '\.c$', '' } | 
+        ForEach-Object { {{.CC}} {{.CPPFLAGS}} {{.CFLAGS}} -c {{.SRC_DIR}}/\$_.c -Iinclude -o {{.OBJ_DIR}}/\$_.o }"
     sources:
       - '{{.SRC_DIR}}/**'
       - include/**
@@ -51,5 +65,7 @@ tasks:
   clean:
     desc: "Remove all files in obj/ and bin/"
     cmds:
-      - powershell -Command "Remove-Item -Path '{{.OBJ_DIR}}' -Recurse -Force"
-      - powershell -Command "Remove-Item -Path '{{.BIN_DIR}}' -Recurse -Force"
+      - >
+        {{.SHELL}} -Command "if (Test-Path -Path '{{.OBJ_DIR}}') { Remove-Item -Path '{{.OBJ_DIR}}' -Recurse -Force }"
+      - >
+        {{.SHELL}} -Command "if (Test-Path -Path '{{.BIN_DIR}}') { Remove-Item -Path '{{.BIN_DIR}}' -Recurse -Force }"
