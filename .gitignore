@@ -51,6 +51,9 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Task Runner
+.task/
+
 .vscode/
 
 test*

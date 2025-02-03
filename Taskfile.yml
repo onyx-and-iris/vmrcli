@@ -1,0 +1,55 @@
+version: '3'
+
+dotenv: [ '.env' ]
+
+vars:
+  program: vmrcli
+
+  CC: gcc
+
+  SRC_DIR: src
+  OBJ_DIR: obj
+  BIN_DIR: bin
+
+  CPPFLAGS: -Iinclude -MMD -MP {{if eq .LOG_USE_COLOR "yes"}}-DLOG_USE_COLOR{{end}}
+
+  CFLAGS: -O -Wall -W -pedantic -ansi -std=c2x
+  LDFLAGS: -Llib
+  LDLIBS: -lm
+
+tasks:
+  default:
+    desc: "Build vmrcli for Windows"
+    deps: [build]
+
+  build:
+    desc: "Build vmrcli for Windows"
+    deps: [link]
+
+  link:
+    desc: "Link all files in obj/ for Windows"
+    deps: [compile]
+    cmds:
+      - powershell -Command "if (!(Test-Path -Path '{{.BIN_DIR}}')) { New-Item -ItemType Directory -Path '{{.BIN_DIR}}' }"
+      - powershell -Command "{{.CC}} {{.LDFLAGS}} obj/*.o {{.LDLIBS}} -o bin/{{.program}}.exe"
+    sources:
+      - obj/**
+    generates:
+      - bin/{{.program}}.exe
+
+  compile:
+    desc: "Compile all files in src/ and include/ for Windows"
+    cmds:
+      - powershell -Command "if (!(Test-Path -Path '{{.OBJ_DIR}}')) { New-Item -ItemType Directory -Path '{{.OBJ_DIR}}' }"
+      - powershell -Command "Get-ChildItem -Path 'src' -Filter '*.c' | ForEach-Object { \$_.Name -replace '\.c$', '' } | ForEach-Object { {{.CC}} {{.CPPFLAGS}} {{.CFLAGS}} -c src/\$_.c -Iinclude -o obj/\$_.o }"
+    sources:
+      - src/**
+      - include/**
+    generates:
+      - obj/**
+
+  clean:
+    desc: "Remove all files in obj/ and bin/"
+    cmds:
+      - powershell -Command "Remove-Item -Path 'obj' -Recurse -Force"
+      - powershell -Command "Remove-Item -Path 'bin' -Recurse -Force"
