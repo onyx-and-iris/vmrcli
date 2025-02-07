@@ -4,7 +4,7 @@ dotenv: [ '.env' ]
 
 vars:
   PROGRAM: vmrcli
-  SHELL: powershell
+  SHELL: pwsh
 
   CC: gcc
 
@@ -32,13 +32,13 @@ tasks:
     desc: "Link all files in obj/ for Windows"
     deps: [compile]
     cmds:
-      - >
-        {{.SHELL}} -Command 
-        "if (!(Test-Path -Path '{{.BIN_DIR}}')) { 
+      - |
+        {{.SHELL}} -Command "
+        if (!(Test-Path -Path '{{.BIN_DIR}}')) { 
           New-Item -ItemType Directory -Path '{{.BIN_DIR}}' 
-        }"
-      - >
-        {{.SHELL}} -Command "{{.CC}} {{.LDFLAGS}} {{.OBJ_DIR}}/*.o {{.LDLIBS}} -o {{.BIN_DIR}}/{{.PROGRAM}}.exe"
+        }
+
+        {{.CC}} {{.LDFLAGS}} {{.OBJ_DIR}}/*.o {{.LDLIBS}} -o {{.BIN_DIR}}/{{.PROGRAM}}.exe"
     sources:
       - '{{.OBJ_DIR}}/**'
     generates:
@@ -47,14 +47,13 @@ tasks:
   compile:
     desc: "Compile all files in src/ and include/ for Windows"
     cmds:
-      - >
-        {{.SHELL}} -Command 
-        "if (!(Test-Path -Path '{{.OBJ_DIR}}')) { 
+      - |
+        {{.SHELL}} -Command "
+        if (!(Test-Path -Path '{{.OBJ_DIR}}')) { 
           New-Item -ItemType Directory -Path '{{.OBJ_DIR}}' 
-        }"
-      - >
-        {{.SHELL}} -Command 
-        "Get-ChildItem -Path '{{.SRC_DIR}}' -Filter '*.c' | 
+        }
+
+        Get-ChildItem -Path '{{.SRC_DIR}}' -Filter '*.c' | 
         ForEach-Object { \$_.Name -replace '\.c$', '' } | 
         ForEach-Object { {{.CC}} {{.CPPFLAGS}} {{.CFLAGS}} -c {{.SRC_DIR}}/\$_.c -o {{.OBJ_DIR}}/\$_.o }"
     sources:
@@ -66,7 +65,7 @@ tasks:
   clean:
     desc: "Remove all files in obj/ and bin/"
     cmds:
-      - >
-        {{.SHELL}} -Command "if (Test-Path -Path '{{.OBJ_DIR}}') { Remove-Item -Path '{{.OBJ_DIR}}' -Recurse -Force }"
-      - >
-        {{.SHELL}} -Command "if (Test-Path -Path '{{.BIN_DIR}}') { Remove-Item -Path '{{.BIN_DIR}}' -Recurse -Force }"
+      - |
+        {{.SHELL}} -Command "
+        if (Test-Path -Path '{{.OBJ_DIR}}') { Remove-Item -Path '{{.OBJ_DIR}}' -Recurse -Force }
+        if (Test-Path -Path '{{.BIN_DIR}}') { Remove-Item -Path '{{.BIN_DIR}}' -Recurse -Force }"
