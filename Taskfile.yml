@@ -1,6 +1,6 @@
 version: '3'
 
-dotenv: [ '.env' ]
+dotenv: ['.env']
 
 vars:
   PROGRAM: vmrcli
@@ -21,15 +21,15 @@ vars:
 
 tasks:
   default:
-    desc: "Build vmrcli for Windows"
+    desc: Build vmrcli for Windows
     deps: [build]
 
   build:
-    desc: "Build vmrcli for Windows"
+    desc: Build vmrcli for Windows
     deps: [link]
 
   link:
-    desc: "Link all files in obj/ for Windows"
+    desc: Link all files in obj/ for Windows
     deps: [compile]
     cmds:
       - |
@@ -45,7 +45,7 @@ tasks:
       - '{{.BIN_DIR}}/{{.PROGRAM}}.exe'
 
   compile:
-    desc: "Compile all files in src/ and include/ for Windows"
+    desc: Compile all files in src/ and include/ for Windows
     cmds:
       - |
         {{.SHELL}} -Command "
@@ -63,7 +63,7 @@ tasks:
       - '{{.OBJ_DIR}}/**'
 
   clean:
-    desc: "Remove all files in obj/ and bin/"
+    desc: Remove all files in obj/ and bin/
     cmds:
       - |
         {{.SHELL}} -Command "
