@@ -15,18 +15,14 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up MSYS2
-      uses: msys2/setup-msys2@v2
+    - name: Set up GCC
+      uses: egor-tensin/setup-gcc@v1
       with:
-        update: true
-
-    - name: Install dependencies
-      run: |
-        pacman -S --noconfirm make mingw-w64-x86_64-gcc
+        version: latest
+        platform: x64
 
     - name: Build
-      run: |
-        make
+      run: make
 
     - name: Archive build artifacts
       uses: actions/upload-artifact@v4
