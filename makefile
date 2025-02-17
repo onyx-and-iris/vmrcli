@@ -47,7 +47,7 @@ $(BIN_DIR) $(OBJ_DIR):
 
 # Clean up generated files
 clean:
-	pwsh -Command Remove-Item -Recurse $(EXE), $(OBJ_DIR) -force
+	pwsh -Command Remove-Item -Recurse $(BIN_DIR), $(OBJ_DIR) -force
 
 # Include dependency files
 -include $(OBJ:.o=.d)
