@@ -18,7 +18,7 @@ jobs:
     - name: Set up GCC
       uses: egor-tensin/setup-mingw@v2.2.0
       with:
-        version: 12.2.0 
+        version: 13.2.0 
 
     - name: Build
       run: make
@@ -27,7 +27,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: vmrcli
-        path: ./dist
+        path: ./bin/vmrcli.exe
 
   release:
     needs: build
@@ -57,6 +57,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist
+        asset_path: ./bin/vmrcli.exe
         asset_name: vmrcli.zip
         asset_content_type: application/zip
