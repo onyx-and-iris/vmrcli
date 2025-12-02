@@ -18,21 +18,24 @@
 #include "log.h"
 #include "util.h"
 
-#define USAGE "Usage: .\\vmrcli.exe [-h] [-i|-I] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>\n" \
+#define USAGE "Usage: .\\vmrcli.exe [-h] [-v] [-i|-I] [-f] [-k] [-l] [-e] [-c] [-m] [-s] <api commands>\n" \
               "Where: \n"                                                                        \
-              "\th: Prints the help message\n"                                                   \
+              "\th: Print the help message\n"                                                   \
+              "\tv: Print the version number\n"                                                 \
               "\ti: Enable interactive mode, use (-I) to disable the '>>' prompt\n"              \
+              "\tf: Do not split input on spaces\n"                                              \
               "\tk: The kind of Voicemeeter (basic, banana, potato)\n"                           \
-              "\tD: Set log level 0=TRACE, 1=DEBUG, 2=INFO, 3=WARN, 4=ERROR, 5=FATAL\n"          \
-              "\tv: Enable extra console output (toggle, set messages)\n"                        \
+              "\tl: Set log level, must be one of TRACE, DEBUG, INFO, WARN, ERROR, or FATAL\n"   \
+              "\te: Enable extra console output (toggle, set messages)\n"                        \
               "\tc: Load a user configuration (give the full file path)\n"                       \
               "\tm: Launch the MacroButtons application\n"                                       \
               "\ts: Launch the StreamerView application"
-#define OPTSTR ":hk:msc:iID:v"
+#define OPTSTR ":hvk:msc:iIfl:e"
 #define MAX_LINE 4096 /* Size of the input buffer */
 #define RES_SZ 512    /* Size of the buffer passed to VBVMR_GetParameterStringW */
 #define COUNT_OF(x) (sizeof(x) / sizeof(x[0]))
 #define DELIMITERS " \t;,"
+#define VERSION "0.12.0"
 
 /**
  * @enum The kind of values a get call may return.
@@ -58,13 +61,13 @@ struct result
     } val;
 };
 
-static bool vflag = false;
+static bool eflag = false;
 
 static void terminate(PT_VMR vmr, char *msg);
 static void usage();
 static enum kind set_kind(char *kval);
-static void interactive(PT_VMR vmr, bool with_prompt);
-static void parse_input(PT_VMR vmr, char *input);
+static void interactive(PT_VMR vmr, bool with_prompt, char *delimiters);
+static void parse_input(PT_VMR vmr, char *input, char *delimiters);
 static void parse_command(PT_VMR vmr, char *command);
 static void get(PT_VMR vmr, char *command, struct result *res);
 
@@ -74,9 +77,10 @@ int main(int argc, char *argv[])
          mflag = false,
          sflag = false,
          cflag = false,
+         fflag = false,
          with_prompt = true;
     int opt;
-    int dvalue;
+    int log_level = LOG_WARN;
     char *cvalue;
     enum kind kind = BANANAX64;
 
@@ -92,6 +96,9 @@ int main(int argc, char *argv[])
     {
         switch (opt)
         {
+        case 'v':
+            printf("vmrcli version %s\n", VERSION);
+            exit(EXIT_SUCCESS);
         case 'k':
             kind = set_kind(optarg);
             if (kind == UNKNOWN)
@@ -116,21 +123,24 @@ int main(int argc, char *argv[])
         case 'i':
             iflag = true;
             break;
-        case 'D':
-            dvalue = atoi(optarg);
-            if (dvalue >= LOG_TRACE && dvalue <= LOG_FATAL)
+        case 'f':
+            fflag = true;
+            break;
+        case 'l':
+            log_level = log_level_from_string(optarg);
+            if (log_level != -1)
             {
-                log_set_level(dvalue);
+                log_set_level(log_level);
             }
             else
             {
                 log_warn(
-                    "-D arg out of range, expected value from 0 up to 5\n"
+                    "-l arg out of range, expected TRACE, DEBUG, INFO, WARN, ERROR, or FATAL\n"
                     "Log level will default to LOG_WARN (3).\n");
             }
             break;
-        case 'v':
-            vflag = true;
+        case 'e':
+            eflag = true;
             break;
         case '?':
             log_fatal("unknown option -- '%c'\n"
@@ -184,16 +194,22 @@ int main(int argc, char *argv[])
         clear(vmr, is_pdirty);
     }
 
+    char *delimiter_ptr = DELIMITERS;
+    if (fflag)
+    {
+        delimiter_ptr++; /* skip space delimiter */
+    }
+
     if (iflag)
     {
         puts("Interactive mode enabled. Enter 'Q' to exit.");
-        interactive(vmr, with_prompt);
+        interactive(vmr, with_prompt, delimiter_ptr);
     }
     else
     {
         for (int i = optind; i < argc; ++i)
         {
-            parse_input(vmr, argv[i]);
+            parse_input(vmr, argv[i], delimiter_ptr);
         }
     }
 
@@ -256,8 +272,9 @@ static enum kind set_kind(char *kval)
  *
  * @param vmr Pointer to the iVMR interface
  * @param with_prompt If true, prints the interactive prompt '>>'
+ * @param delimiters A string of delimiter characters to split each input line
  */
-static void interactive(PT_VMR vmr, bool with_prompt)
+static void interactive(PT_VMR vmr, bool with_prompt, char *delimiters)
 {
     char input[MAX_LINE];
     size_t len;
@@ -270,7 +287,7 @@ static void interactive(PT_VMR vmr, bool with_prompt)
         if (len == 1 && toupper(input[0]) == 'Q')
             break;
 
-        parse_input(vmr, input);
+        parse_input(vmr, input, delimiters);
 
         if (with_prompt)
             printf(">> ");
@@ -284,19 +301,20 @@ static void interactive(PT_VMR vmr, bool with_prompt)
  *
  * @param vmr Pointer to the iVMR interface
  * @param input Each input line, from stdin or CLI args
+ * @param delimiters A string of delimiter characters to split each input line
  */
-static void parse_input(PT_VMR vmr, char *input)
+static void parse_input(PT_VMR vmr, char *input, char *delimiters)
 {
     if (is_comment(input))
         return;
 
     char *token, *p;
 
-    token = strtok_r(input, DELIMITERS, &p);
+    token = strtok_r(input, delimiters, &p);
     while (token != NULL)
     {
         parse_command(vmr, token);
-        token = strtok_r(NULL, DELIMITERS, &p);
+        token = strtok_r(NULL, delimiters, &p);
     }
 }
 
@@ -323,7 +341,7 @@ static void parse_command(PT_VMR vmr, char *command)
     if (qc_ptr != NULL)
     {
         set_parameters(vmr, qc_ptr->fullcommand);
-        if (vflag)
+        if (eflag)
         {
             printf("Setting %s\n", qc_ptr->fullcommand);
         }
@@ -341,7 +359,7 @@ static void parse_command(PT_VMR vmr, char *command)
             if (res.val.f == 1 || res.val.f == 0)
             {
                 set_parameter_float(vmr, command, 1 - res.val.f);
-                if (vflag)
+                if (eflag)
                 {
                     printf("Toggling %s\n", command);
                 }
@@ -355,7 +373,7 @@ static void parse_command(PT_VMR vmr, char *command)
     if (strchr(command, '=') != NULL) /* set */
     {
         set_parameters(vmr, command);
-        if (vflag)
+        if (eflag)
         {
             printf("Setting %s\n", command);
         }

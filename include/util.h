@@ -15,6 +15,7 @@ struct quickcommand
 };
 
 void remove_last_part_of_path(char *fullpath);
+int log_level_from_string(const char *level);
 char *kind_as_string(char *s, int kind, int n);
 char *version_as_string(char *s, long v, int n);
 bool is_comment(char *s);

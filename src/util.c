@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "util.h"
+#include "log.h"
 
 /**
  * @brief Removes the last part of a path
@@ -26,6 +27,29 @@ void remove_last_part_of_path(char *fullpath)
     {
         *p = '\0';
     }
+}
+
+/**
+ * @brief Gets log level as int from string
+ * @param level Log level as string
+ * @return int Log level as int, or -1 if not found
+ */
+int log_level_from_string(const char *level)
+{
+    if (strcmp(level, "TRACE") == 0)
+        return LOG_TRACE;
+    else if (strcmp(level, "DEBUG") == 0)
+        return LOG_DEBUG;
+    else if (strcmp(level, "INFO") == 0)
+        return LOG_INFO;
+    else if (strcmp(level, "WARN") == 0)
+        return LOG_WARN;
+    else if (strcmp(level, "ERROR") == 0)
+        return LOG_ERROR;
+    else if (strcmp(level, "FATAL") == 0)
+        return LOG_FATAL;
+    else
+        return -1;
 }
 
 /**
