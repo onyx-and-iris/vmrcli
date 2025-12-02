@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
         usage();
     }
 
-    log_set_level(LOG_WARN);
+    log_set_level(log_level);
 
     opterr = 0;
     while ((opt = getopt(argc, argv, OPTSTR)) != -1)
