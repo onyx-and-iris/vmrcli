@@ -13,7 +13,7 @@
 ## `Use`
 
 ```powershell
-.\vmrcli.exe [-h] [-i|-I] [-k] [-D] [-v] [-c] [-m] [-s] <api commands>
+.\vmrcli.exe [-h] [-v] [-i|-I] [-f] [-k] [-l] [-e] [-c] [-m] [-s] <api commands>
 ```
 
 Where:
@@ -22,8 +22,8 @@ Where:
 - `v`: Print the version of vmrcli.
 - `i`: Enable interactive mode, use (-I) to disable the '>>' prompt.
   - If set, any api commands passed on the command line will be ignored.
-- `k`: The kind of Voicemeeter (basic, banana or potato). Use this to launch the GUI.
 - `f`: Do not split input on spaces.
+- `k`: The kind of Voicemeeter (basic, banana or potato). Use this to launch the GUI.
 - `l`: Set log level, must be one of TRACE, DEBUG, INFO, WARN, ERROR, or FATAL
 - `e`: Enable extra console output (toggle, set messages)
 - `c`: Load a user configuration (give the full file path)
