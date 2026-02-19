@@ -69,3 +69,16 @@ tasks:
         {{.SHELL}} -Command "
         if (Test-Path -Path '{{.OBJ_DIR}}') { Remove-Item -Path '{{.OBJ_DIR}}' -Recurse -Force }
         if (Test-Path -Path '{{.BIN_DIR}}') { Remove-Item -Path '{{.BIN_DIR}}' -Recurse -Force }"
+
+  bump:
+    desc: 'Bump the version. Usage: "task bump -- show" or "task bump -- [patch|minor|major]".'
+    preconditions:
+      - sh: 'pwsh -c "if (Get-Command bump) { exit 0 } else { exit 1 }"'
+        msg: "The 'bump' command is not available. Please install the required tools to use this command."
+    cmds:
+      - |
+        {{if eq .CLI_ARGS "show"}}
+          pwsh -c "bump show -f src/vmrcli.c -p \"#define VERSION .(\d+\.\d+\.\d+).\""
+        {{else}}
+          pwsh -c "bump {{.CLI_ARGS}} -w -f src/vmrcli.c -p \"#define VERSION .(\d+\.\d+\.\d+).\""
+        {{end}}
