@@ -171,17 +171,17 @@ make clean
 
 ---
 
-## 📚 Resources
+## Resources
 
 ### Official Documentation
-- 📖 [Voicemeeter Remote C API][remoteapi-docs] - Complete API reference
+- [Voicemeeter Remote C API][remoteapi-docs] - Complete API reference
 
 ### Acknowledgments
-- 🙏 **[rxi][rxi-user]** - Creator of the excellent [log.c][log-c] logging library
+- **[rxi][rxi-user]** - Creator of the excellent [log.c][log-c] logging library
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
