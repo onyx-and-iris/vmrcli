@@ -1,0 +1,98 @@
+name: Build vmrcli
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-make
+            make
+
+      - name: Add MSYS2 to PATH
+        run: |
+          echo "${{ runner.temp }}\msys64\mingw64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          echo "${{ runner.temp }}\msys64\usr\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        shell: pwsh
+
+      - name: Verify GCC installation
+        run: |
+          gcc --version
+          make --version
+        shell: pwsh
+
+      - name: Clean previous builds
+        run: make clean
+        shell: pwsh
+        continue-on-error: true
+
+      - name: Build vmrcli
+        run: make all
+        shell: pwsh
+        env:
+          LOG_USE_COLOR: yes
+
+      - name: Verify build output
+        run: |
+          if (Test-Path "bin/vmrcli.exe") {
+            Write-Host "✅ Build successful - vmrcli.exe created"
+            Get-Item "bin/vmrcli.exe" | Format-List Name, Length, LastWriteTime
+          } else {
+            Write-Host "❌ Build failed - vmrcli.exe not found"
+            exit 1
+          }
+        shell: pwsh
+
+      - name: Test executable
+        run: |
+          if (Test-Path "bin/vmrcli.exe") {
+            Write-Host "Testing vmrcli.exe..."
+            & ".\bin\vmrcli.exe" -h
+          }
+        shell: pwsh
+        continue-on-error: true
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vmrcli-windows
+          path: |
+            bin/vmrcli.exe
+          retention-days: 30
+
+      - name: Upload build logs (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            obj/
+            *.log
+          retention-days: 7
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            bin/vmrcli.exe
+          tag_name: ${{ github.ref_name }}
+          name: vmrcli ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
