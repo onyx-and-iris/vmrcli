@@ -1,127 +1,189 @@
 # Voicemeeter Remote Command Line Utility
 
-## `Tested against`
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows-blue)](#requirements)
 
-- Basic 1.1.1.9
-- Banana 2.1.1.9
-- Potato 3.1.1.9
+> A command-line interface for controlling Voicemeeter
 
-## `Requirements`
+## Compatibility
 
-- [Voicemeeter](https://voicemeeter.com/)
+| Voicemeeter Version | Status |
+|-------------------|--------|
+| Basic 1.1.2.2 | ✅ Tested |
+| Banana 2.1.2.2 | ✅ Tested |
+| Potato 3.1.2.2 | ✅ Tested |
 
-## `Use`
+## Requirements
+
+- **[Voicemeeter](https://voicemeeter.com/)** - Any version (Basic, Banana, or Potato)
+- **Windows** operating system
+- **Command line environment** (PowerShell, CMD, or Terminal)
+
+## Usage
 
 ```powershell
-.\vmrcli.exe [-h] [-v] [-i|-I] [-f] [-k] [-l] [-e] [-c] [-m] [-s] <api commands>
+.\vmrcli.exe [OPTIONS] <api_commands>
 ```
 
-Where:
+### Command Line Options
 
-- `h`: Print the help message.
-- `v`: Print the version of vmrcli.
-- `i`: Enable interactive mode, use (-I) to disable the '>>' prompt.
-  - If set, any api commands passed on the command line will be ignored.
-- `f`: Do not split input on spaces.
-- `k`: The kind of Voicemeeter (basic, banana or potato). Use this to launch the GUI.
-- `l`: Set log level, must be one of TRACE, DEBUG, INFO, WARN, ERROR, or FATAL
-- `e`: Enable extra console output (toggle, set messages)
-- `c`: Load a user configuration (give the full file path)
-- `m`: Launch the MacroButtons application
-- `s`: Launch the StreamerView application
+| Option | Description | Example |
+|--------|-------------|----------|
+| `-h` | Print help message | `vmrcli.exe -h` |
+| `-v` | Show version information | `vmrcli.exe -v` |
+| `-i` | Enable interactive mode | `vmrcli.exe -i` |
+| `-I` | Interactive mode without prompt | `vmrcli.exe -I` |
+| `-f` | Don't split input on spaces | `vmrcli.exe -f` |
+| `-k <type>` | Launch Voicemeeter GUI | `-kbasic`, `-kbanana`, `-kpotato` |
+| `-l <level>` | Set log level | `-lDEBUG`, `-lINFO`, `-lWARN` |
+| `-e` | Enable extra console output | `vmrcli.exe -e` |
+| `-c <path>` | Load user configuration | `-c "C:\config.txt"` |
+| `-m` | Launch MacroButtons app | `vmrcli.exe -m` |
+| `-s` | Launch StreamerView app | `vmrcli.exe -s` |
+
+> **Note:** When using interactive mode (`-i`), command line API commands are ignored.
 
 ## `API Commands`
 
-- Commands starting with `!` will be toggled, use it with boolean parameters.
-- Commands containing `=` will set a value. (use `+=` and `-=` to increment/decrement)
-- All other commands with get a value.
+### Command Types
 
-Examples:
+| Syntax | Action | Example |
+|--------|---------|---------|
+| `!command` | **Toggle** boolean values | `!strip[0].mute` |
+| `command=value` | **Set** a parameter | `strip[0].gain=2.5` |
+| `command+=value` | **Increment** a parameter | `bus[0].gain+=1.2` |
+| `command-=value` | **Decrement** a parameter | `bus[0].gain-=3.8` |
+| `command` | **Get** current value | `strip[0].label` |
 
-Launch basic GUI, set log level to INFO, Toggle Strip 0 Mute, print its new value, then decrease Bus 0 Gain by 3.8
+> **Tip:** Use quotes around values containing spaces: `'strip[0].label="my device"'`
+
+---
+
+### Examples
+
+#### **Basic Operations**
+*Toggle mute, get values, and adjust gain*
 
 ```powershell
 .\vmrcli.exe -kbasic -lINFO !strip[0].mute strip[0].mute bus[0].gain-=3.8
 ```
 
-Launch banana GUI, set log level to DEBUG, set Strip 0 label to podmic then print Strip 2 label
+#### **Setting Labels with Spaces**
+*Set device labels and retrieve values*
 
 ```powershell
-.\vmrcli.exe -kbanana -lDEBUG strip[0].label=podmic strip[2].label
+.\vmrcli.exe -kbanana -lDEBUG 'strip[0].label="my podmic"' strip[2].label
 ```
 
-#### `String Commands With Spaces`
-
-It may be desirable to send a string request containing spaces, for example to change an output device. By default the CLI splits such strings, to avoid this pass the `-f` flag. It's probably best to use this with single commands only due to its effect on how the CLI parses strings. Also note the inclusion of the double quotation marks, it seems the C API requires them.
+#### **Device Configuration**
+*Configure hardware devices with complex names*
 
 ```powershell
-.\vmrcli.exe -lDEBUG -f bus[1].device.wdm='"Realtek Digital Output (Realtek(R) Audio)"'
-
-.\vmrcli.exe -lDEBUG -f strip[0].label='"My Podmic"'
+.\vmrcli.exe -lDEBUG bus[2].mute=1 bus[2].mute 'bus[2].device.wdm="Realtek Digital Output (Realtek(R) Audio)"'
 ```
 
-#### `Quick Commands`
+#### **Batch Operations**
+*Multiple strip configurations in one command*
 
-A short list of quick commands are available:
+```powershell
+.\vmrcli.exe `
+  'strip[0].label="my podmic"' strip[0].label !strip[0].mute `
+  'strip[1].label="my wavemic"' strip[1].label !strip[1].mute
+```
 
-- `lock`: command.lock=1
-- `unlock`: command.lock=0
-- `show`: command.show=1
-- `hide`: command.show=0
-- `restart`: command.restart=1
+### Quick Commands
 
-They may be used in direct or interactive mode.
+*Convenient shortcuts for common Voicemeeter operations*
 
-## `Interactive Mode`
+| Command | API Equivalent | Description |
+|---------|----------------|-------------|
+| `lock` | `command.lock=1` | 🔒 Lock Voicemeeter parameters |
+| `unlock` | `command.lock=0` | 🔓 Unlock Voicemeeter parameters |
+| `show` | `command.show=1` | 👁️ Show Voicemeeter interface |
+| `hide` | `command.show=0` | 🙈 Hide Voicemeeter interface |
+| `restart` | `command.restart=1` | 🔄 Restart Voicemeeter engine |
 
-Running the following command in Powershell:
+> **Available in both direct and interactive modes**
 
+## Interactive Mode
+
+*Real-time command interface for live audio control*
+
+**Start interactive session:**
 ```powershell
 .\vmrcli.exe -i
 ```
 
-Will open an interactive prompt:
-
+**Interactive prompt:**
 ```powershell
 Interactive mode enabled. Enter 'Q' to exit.
 >>
 ```
 
-API commands follow the same rules as listed above. Entering `Q` or `q` will exit the program.
+> **Important:** Command line API arguments are ignored when using `-i`
 
-## `Script files`
+## Script Files
 
-Scripts can be loaded from text files, for example in Powershell:
+*Automate complex audio setups with script files*
 
+### Loading Scripts
+
+**From file content:**
 ```powershell
 .\vmrcli.exe -lDEBUG $(Get-Content .\example_commands.txt)
 ```
 
-You may also pipe a scripts contents to the CLI:
-
+**Via pipeline:**
 ```powershell
 $(Get-Content .\example_commands.txt) | .\vmrcli.exe -lDEBUG -I
 ```
 
-Multiple API commands can be in a single line, they may be separated by space, `;` or `,`.
+### Script Format Rules
 
-Lines starting with `#` will be interpreted as comments.
+| Feature | Syntax | Example |
+|---------|--------|----------|
+| **Multiple commands per line** | Space, `;`, or `,` separated | `strip[0].mute=1;bus[0].gain+=2` |
+| **Comments** | Lines starting with `#` | `# This is a comment` |
 
-## `Build`
+## Build Instructions
 
-Run the included `makefile` with [GNU Make](https://www.gnu.org/software/make/).
+*Compile from source using GNU Make*
 
-The binary in [Releases][releases] is compiled with coloured logging enabled. To disable this you can override the `LOG_USE_COLOR` variable, for example:
+### Prerequisites
+- [GNU Make](https://www.gnu.org/software/make/) 
+- GCC compiler (recommended)
+- Windows development environment
 
-`make LOG_USE_COLOR=no`
+### Build Commands
 
-## `Official Documentation`
+```bash
+# Standard build
+make
 
-- [Voicemeeter Remote C API][remoteapi-docs]
+# Disable colored logging
+make LOG_USE_COLOR=no
 
-## `Special Thanks`
+# Clean build artifacts
+make clean
+```
 
-- [rxi][rxi-user] for writing the [log.c][log-c] package
+> **Pre-built binaries** are available in [Releases][releases] with coloured logging enabled
+
+---
+
+## 📚 Resources
+
+### Official Documentation
+- 📖 [Voicemeeter Remote C API][remoteapi-docs] - Complete API reference
+
+### Acknowledgments
+- 🙏 **[rxi][rxi-user]** - Creator of the excellent [log.c][log-c] logging library
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 [releases]: https://github.com/onyx-and-iris/vmrcli/releases
 [remoteapi-docs]: https://github.com/onyx-and-iris/Voicemeeter-SDK/blob/main/VoicemeeterRemoteAPI.pdf
