@@ -2,7 +2,7 @@
  * @file vmrcli.c
  * @author Onyx and Iris (code@onyxandiris.online)
  * @brief A Voicemeeter Remote Command Line Interface
- * @version 0.11.0
+ * @version 0.13.0
  * @date 2024-07-06
  *
  * @copyright Copyright (c) 2024
@@ -11,6 +11,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 #include <getopt.h>
 #include <windows.h>
 #include "interface.h"
@@ -35,7 +37,7 @@
 #define RES_SZ 512    /* Size of the buffer passed to VBVMR_GetParameterStringW */
 #define COUNT_OF(x) (sizeof(x) / sizeof(x[0]))
 #define DELIMITERS " \t;,"
-#define VERSION "0.12.0"
+#define VERSION "0.13.0"
 
 /**
  * @enum The kind of values a get call may return.
@@ -294,11 +296,35 @@ static void interactive(PT_VMR vmr, bool with_prompt, char *delimiters)
     }
 }
 
+/* Helper functions for parse_input */
+static inline bool is_quote_char(char c) {
+    return (c == '"' || c == '\'');
+}
+
+static inline bool is_delimiter_char(char c, const char *delimiters) {
+    return strchr(delimiters, c) != NULL;
+}
+
+static char* skip_consecutive_delimiters(char *p, const char *delimiters) {
+    while (*p != '\0' && is_delimiter_char(*p, delimiters)) {
+        p++;
+    }
+    return p;
+}
+
+static bool add_char_to_token(char *token, size_t *token_len, char c, size_t max_len) {
+    if (*token_len < max_len - 1) {
+        token[(*token_len)++] = c;
+        return true;
+    }
+    return false; // Buffer would overflow
+}
+
 /**
- * @brief Returns early if input is a comment
- * Walks through each line split by " \t;," delimiters.
- * Each token is passed to parse_command()
- *
+ * @brief Parse each input line into separate commands and execute them.
+ * Commands are split based on the delimiters argument, but quoted strings are preserved as single commands.
+ * See the test cases for examples of how input lines are parsed:
+ * https://github.com/onyx-and-iris/vmrcli?tab=readme-ov-file#api-commands
  * @param vmr Pointer to the iVMR interface
  * @param input Each input line, from stdin or CLI args
  * @param delimiters A string of delimiter characters to split each input line
@@ -308,13 +334,54 @@ static void parse_input(PT_VMR vmr, char *input, char *delimiters)
     if (is_comment(input))
         return;
 
-    char *token, *p;
+    char *current = input;
+    char token[MAX_LINE];
+    size_t token_length = 0;
+    bool inside_quotes = false;
+    char quote_char = '\0';
 
-    token = strtok_r(input, delimiters, &p);
-    while (token != NULL)
+    while (*current != '\0')
     {
+        if (!inside_quotes && is_quote_char(*current))
+        {
+            inside_quotes = true;
+            quote_char = *current;
+            current++;
+            log_trace("Entering quotes with char '%c'", quote_char);
+            continue;
+        }
+        else if (inside_quotes && *current == quote_char)
+        {
+            inside_quotes = false;
+            quote_char = '\0';
+            current++;
+            log_trace("Exiting quotes");
+            continue;
+        }
+        else if (!inside_quotes && is_delimiter_char(*current, delimiters))
+        {
+            if (token_length > 0)
+            {
+                token[token_length] = '\0';
+                parse_command(vmr, token);
+                token_length = 0;
+            }
+            
+            current = skip_consecutive_delimiters(current, delimiters);
+            continue;
+        }
+        else
+        {
+            add_char_to_token(token, &token_length, *current, MAX_LINE);
+            log_trace("Added char '%c' to token, current token: '%s'", *current, token);
+        }
+        current++;
+    }
+
+    if (token_length > 0)
+    {
+        token[token_length] = '\0';
         parse_command(vmr, token);
-        token = strtok_r(NULL, delimiters, &p);
     }
 }
 
@@ -341,8 +408,7 @@ static void parse_command(PT_VMR vmr, char *command)
     if (qc_ptr != NULL)
     {
         set_parameters(vmr, qc_ptr->fullcommand);
-        if (eflag)
-        {
+        if (eflag) {
             printf("Setting %s\n", qc_ptr->fullcommand);
         }
         return;
@@ -359,8 +425,7 @@ static void parse_command(PT_VMR vmr, char *command)
             if (res.val.f == 1 || res.val.f == 0)
             {
                 set_parameter_float(vmr, command, 1 - res.val.f);
-                if (eflag)
-                {
+                if (eflag) {
                     printf("Toggling %s\n", command);
                 }
             }
@@ -372,10 +437,18 @@ static void parse_command(PT_VMR vmr, char *command)
 
     if (strchr(command, '=') != NULL) /* set */
     {
-        set_parameters(vmr, command);
-        if (eflag)
+        char quoted_command[MAX_LINE];
+        
+        if (add_quotes_if_needed(command, quoted_command, MAX_LINE))
         {
-            printf("Setting %s\n", command);
+            set_parameters(vmr, quoted_command);
+            if (eflag) {
+                printf("Setting %s\n", command);
+            }
+        }
+        else
+        {
+            log_error("Command too long after adding quotes");
         }
     }
     else /* get */

@@ -2,7 +2,7 @@
  * @file util.c
  * @author Onyx and Iris (code@onyxandiris.online)
  * @brief Utility functions.
- * @version 0.11.0
+ * @version 0.13.0
  * @date 2024-07-06
  *
  * @copyright Copyright (c) 2024
@@ -124,4 +124,68 @@ struct quickcommand *command_in_quickcommands(const char *command_key, const str
         }
     }
     return NULL;
+}
+
+/**
+ * @brief Adds quotes around the value part of a command if it contains spaces or tabs
+ *
+ * @param command The input command string (parameter=value format)
+ * @param output Buffer to store the result
+ * @param max_len Maximum length of the output buffer
+ * @return true if quotes were added or command was copied successfully
+ * @return false if the command is too long or invalid
+ */
+bool add_quotes_if_needed(const char *command, char *output, size_t max_len)
+{
+    const char *equals_pos = strchr(command, '=');
+    
+    // No '=' found, copy command as-is
+    if (equals_pos == NULL) {
+        if (strlen(command) >= max_len)
+            return false;
+        strcpy(output, command);
+        return true;
+    }
+
+    const char *value = equals_pos + 1;
+    
+    // Value doesn't contain spaces or tabs, copy command as-is  
+    if (strchr(value, ' ') == NULL && strchr(value, '\t') == NULL) {
+        if (strlen(command) >= max_len)
+            return false;
+        strcpy(output, command);
+        return true;
+    }
+
+    // Value needs quotes - calculate required buffer size
+    size_t param_len = equals_pos - command;
+    size_t value_len = strlen(value);
+    size_t quotes_len = 2;
+    size_t required_len = param_len + 1 + quotes_len + value_len + 1; // param + '=' + '"' + value + '"' + '\0'
+    
+    if (required_len > max_len)
+        return false;
+    
+    /**
+     * Construct the output string in the format: parameter="value"
+     * - Copy the parameter part (up to the '=')
+     * - Append '=' and opening quote
+     * - Append the value
+     * - Append closing quote and null terminator
+     */
+    char *pos = output;
+    
+    strncpy(pos, command, param_len);
+    pos += param_len;
+    
+    *pos++ = '=';
+    *pos++ = '"';
+    
+    strcpy(pos, value);
+    pos += value_len;
+    
+    *pos++ = '"';
+    *pos = '\0';
+    
+    return true;
 }

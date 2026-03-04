@@ -20,5 +20,6 @@ char *kind_as_string(char *s, int kind, int n);
 char *version_as_string(char *s, long v, int n);
 bool is_comment(char *s);
 struct quickcommand *command_in_quickcommands(const char *command, const struct quickcommand *quickcommands, int n);
+bool add_quotes_if_needed(const char *command, char *output, size_t max_len);
 
 #endif /* __UTIL_H__ */
