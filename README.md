@@ -69,10 +69,10 @@
 ```
 
 #### **Setting Labels with Spaces**
-*Set device labels and retrieve values*
+*Set labels and print them back*
 
 ```powershell
-.\vmrcli.exe -kbanana -lDEBUG 'strip[0].label="my podmic"' strip[2].label
+.\vmrcli.exe -kbanana -lDEBUG 'strip[0].label="my podmic"' strip[0].label
 ```
 
 #### **Device Configuration**
