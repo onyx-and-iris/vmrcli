@@ -80,6 +80,6 @@ tasks:
         {{if eq .CLI_ARGS "show"}}
           pwsh -c "bump show -f src/vmrcli.c -p \"#define VERSION .(\d+\.\d+\.\d+).\""
         {{else}}
-          pwsh -c "bump {{.CLI_ARGS}} -w -f src/vmrcli.c -p \"#define VERSION .(\d+\.\d+\.\d+).\""
-          pwsh -c "bump {{.CLI_ARGS}} -w -f src/interface.c -f src/util.c -f src/vmrcli.c -f src/wrapper.c -p \"@version (\d+\.\d+\.\d+)\""
+          pwsh -c "bump {{.CLI_ARGS}} -w -f src/vmrcli.c -p \"#define VERSION .(\d+\.\d+\.\d+).\" -pp"
+          pwsh -c "bump {{.CLI_ARGS}} -w -f src/interface.c -f src/util.c -f src/vmrcli.c -f src/wrapper.c -p \"@version (\d+\.\d+\.\d+)\" -pp"
         {{end}}
