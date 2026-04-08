@@ -1,6 +1,6 @@
 version: '3'
 
-dotenv: ['.env']
+dotenv: ['.Taskfile.env']
 
 vars:
   PROGRAM: vmrcli
