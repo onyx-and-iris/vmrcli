@@ -2,7 +2,7 @@
  * @file vmrcli.c
  * @author Onyx and Iris (code@onyxandiris.online)
  * @brief A Voicemeeter Remote Command Line Interface
- * @version 0.13.0
+ * @version 0.14.0
  * @date 2024-07-06
  *
  * @copyright Copyright (c) 2024
@@ -22,22 +22,23 @@
 
 #define USAGE "Usage: .\\vmrcli.exe [-h] [-v] [-i|-I] [-f] [-k] [-l] [-e] [-c] [-m] [-s] <api commands>\n" \
               "Where: \n"                                                                        \
-              "\th: Print the help message\n"                                                   \
-              "\tv: Print the version number\n"                                                 \
-              "\ti: Enable interactive mode, use (-I) to disable the '>>' prompt\n"              \
-              "\tf: Do not split input on spaces\n"                                              \
-              "\tk: The kind of Voicemeeter (basic, banana, potato)\n"                           \
-              "\tl: Set log level, must be one of TRACE, DEBUG, INFO, WARN, ERROR, or FATAL\n"   \
-              "\te: Enable extra console output (toggle, set messages)\n"                        \
-              "\tc: Load a user configuration (give the full file path)\n"                       \
-              "\tm: Launch the MacroButtons application\n"                                       \
-              "\ts: Launch the StreamerView application"
+              "\t-h, --help: Print the help message\n"                                          \
+              "\t-v, --version: Print the version number\n"                                     \
+              "\t-i, --interactive: Enable interactive mode\n"                                  \
+              "\t-I, --no-prompt: Enable interactive mode without the '>>' prompt\n"             \
+              "\t-f, --full-line: Do not split input on spaces\n"                               \
+              "\t-k, --kind: The kind of Voicemeeter (basic, banana, potato)\n"                  \
+              "\t-l, --log-level: Set log level, must be one of TRACE, DEBUG, INFO, WARN, ERROR, or FATAL\n" \
+              "\t-e, --extra-output: Enable extra console output (toggle, set messages)\n"      \
+              "\t-c, --config: Load a user configuration (give the full file path)\n"          \
+              "\t-m, --macrobuttons: Launch the MacroButtons application\n"                     \
+              "\t-s, --streamerview: Launch the StreamerView application"
 #define OPTSTR ":hvk:msc:iIfl:e"
 #define MAX_LINE 4096 /* Size of the input buffer */
 #define RES_SZ 512    /* Size of the buffer passed to VBVMR_GetParameterStringW */
 #define COUNT_OF(x) (sizeof(x) / sizeof(x[0]))
 #define DELIMITERS " \t;,"
-#define VERSION "0.13.0"
+#define VERSION "0.14.0"
 
 /**
  * @enum The kind of values a get call may return.
@@ -73,28 +74,55 @@ static void parse_input(PT_VMR vmr, char *input, char *delimiters);
 static void parse_command(PT_VMR vmr, char *command);
 static void get(PT_VMR vmr, char *command, struct result *res);
 
-int main(int argc, char *argv[])
-{
-    bool iflag = false,
-         mflag = false,
-         sflag = false,
-         cflag = false,
-         fflag = false,
-         with_prompt = true;
-    int opt;
-    int log_level = LOG_WARN;
+struct config_t {
+    bool mflag;
+    bool sflag;
+    bool cflag;
     char *cvalue;
-    enum kind kind = BANANAX64;
+    bool iflag;
+    bool with_prompt;
+    bool fflag;
+    int log_level;
+    enum kind kind;
+};
+
+int get_options(struct config_t *config, int argc, char *argv[])
+{
+    static const struct option options[] =
+    {
+        {"help",   no_argument,  0, 'h'},
+        {"version",no_argument,  0, 'v'},
+        {"kind",   required_argument,  0, 'k'},
+        {"macrobuttons", no_argument,   0, 'm'},
+        {"streamerview", no_argument,   0, 's'},
+        {"config", required_argument,  0, 'c'},
+        {"interactive", no_argument,    0, 'i'},
+        {"no-prompt", no_argument,      0, 'I'},
+        {"full-line", no_argument,      0, 'f'},
+        {"log-level", required_argument,0, 'l'},
+        {"extra-output", no_argument,   0, 'e'},
+        {NULL,             0,                  NULL,  0 }
+    };
+
+    config->iflag = false;
+    config->mflag = false;
+    config->sflag = false;
+    config->cflag = false;
+    config->fflag = false;
+    config->with_prompt = true;
+    config->log_level = LOG_WARN;
+    config->kind = BANANAX64;
 
     if (argc == 1)
     {
         usage();
     }
 
-    log_set_level(log_level);
+    log_set_level(config->log_level);
 
     opterr = 0;
-    while ((opt = getopt(argc, argv, OPTSTR)) != -1)
+    int opt;
+    while ((opt = getopt_long(argc, argv, OPTSTR, options, NULL)) != -1)
     {
         switch (opt)
         {
@@ -102,37 +130,37 @@ int main(int argc, char *argv[])
             printf("vmrcli version %s\n", VERSION);
             exit(EXIT_SUCCESS);
         case 'k':
-            kind = set_kind(optarg);
-            if (kind == UNKNOWN)
+            config->kind = set_kind(optarg);
+            if (config->kind == UNKNOWN)
             {
                 log_fatal("Unknown Voicemeeter kind '%s'", optarg);
                 exit(EXIT_FAILURE);
             }
             break;
         case 'm':
-            mflag = true;
+            config->mflag = true;
             break;
         case 's':
-            sflag = true;
+            config->sflag = true;
             break;
         case 'c':
-            cflag = true;
-            cvalue = optarg;
+            config->cflag = true;
+            config->cvalue = optarg;
             break;
         case 'I':
-            with_prompt = false;
+            config->with_prompt = false;
             [[fallthrough]];
         case 'i':
-            iflag = true;
+            config->iflag = true;
             break;
         case 'f':
-            fflag = true;
+            config->fflag = true;
             break;
         case 'l':
-            log_level = log_level_from_string(optarg);
-            if (log_level != -1)
+            config->log_level = log_level_from_string(optarg);
+            if (config->log_level != -1)
             {
-                log_set_level(log_level);
+                log_set_level(config->log_level);
             }
             else
             {
@@ -160,6 +188,20 @@ int main(int argc, char *argv[])
             usage();
         }
     }
+    return optind;
+}
+
+int main(int argc, char *argv[])
+{
+    struct config_t config;
+    int optind = get_options(&config, argc, argv);
+
+    if (argc == 1)
+    {
+        usage();
+    }
+
+    log_set_level(config.log_level);
 
     PT_VMR vmr = create_interface();
     if (vmr == NULL)
@@ -167,7 +209,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    long rep = login(vmr, kind);
+    long rep = login(vmr, config.kind);
     if (rep != 0)
     {
         if (rep == -2)
@@ -176,36 +218,36 @@ int main(int argc, char *argv[])
             terminate(vmr, "Error logging into the Voicemeeter API");
     }
 
-    if (mflag)
+    if (config.mflag)
     {
         run_voicemeeter(vmr, MACROBUTTONS);
         log_info("MacroButtons app launched");
     }
 
-    if (sflag)
+    if (config.sflag)
     {
         run_voicemeeter(vmr, STREAMERVIEW);
         log_info("StreamerView app launched");
     }
 
-    if (cflag)
+    if (config.cflag)
     {
-        set_parameter_string(vmr, "command.load", cvalue);
-        log_info("Profile %s loaded", cvalue);
+        set_parameter_string(vmr, "command.load", config.cvalue);
+        log_info("Profile %s loaded", config.cvalue);
         Sleep(300);
         clear(vmr, is_pdirty);
     }
 
     char *delimiter_ptr = DELIMITERS;
-    if (fflag)
+    if (config.fflag)
     {
         delimiter_ptr++; /* skip space delimiter */
     }
 
-    if (iflag)
+    if (config.iflag)
     {
         puts("Interactive mode enabled. Enter 'Q' to exit.");
-        interactive(vmr, with_prompt, delimiter_ptr);
+        interactive(vmr, config.with_prompt, delimiter_ptr);
     }
     else
     {

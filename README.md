@@ -27,19 +27,19 @@
 
 ### Command Line Options
 
-| Option | Description | Example |
-|--------|-------------|----------|
-| `-h` | Print help message | `vmrcli.exe -h` |
-| `-v` | Show version information | `vmrcli.exe -v` |
-| `-i` | Enable interactive mode | `vmrcli.exe -i` |
-| `-I` | Interactive mode without prompt | `vmrcli.exe -I` |
-| `-f` | Don't split input on spaces | `vmrcli.exe -f` |
-| `-k <type>` | Launch Voicemeeter GUI | `-kbasic`, `-kbanana`, `-kpotato` |
-| `-l <level>` | Set log level | `-lDEBUG`, `-lINFO`, `-lWARN` |
-| `-e` | Enable extra console output | `vmrcli.exe -e` |
-| `-c <path>` | Load user configuration | `-c "C:\config.txt"` |
-| `-m` | Launch MacroButtons app | `vmrcli.exe -m` |
-| `-s` | Launch StreamerView app | `vmrcli.exe -s` |
+| Option | Long Option | Description | Example |
+|--------|-------------|-------------|---------|
+| `-h` | `--help` | Print help message | `vmrcli.exe -h` |
+| `-v` | `--version` | Show version information | `vmrcli.exe -v` |
+| `-i` | `--interactive` | Enable interactive mode | `vmrcli.exe -i` |
+| `-I` | `--no-prompt` | Interactive mode without prompt | `vmrcli.exe -I` |
+| `-f` | `--full-line` | Don't split input on spaces | `vmrcli.exe -f` |
+| `-k <type>` | `--kind <type>` | Launch Voicemeeter GUI | `--kind basic`, `--kind banana`, `--kind potato` |
+| `-l <level>` | `--log-level <level>` | Set log level | `--log-level DEBUG`, `--log-level WARN` |
+| `-e` | `--extra-output` | Enable extra console output | `vmrcli.exe -e` |
+| `-c <path>` | `--config <path>` | Load user configuration | `--config "C:\config.txt"` |
+| `-m` | `--macrobuttons` | Launch MacroButtons app | `vmrcli.exe -m` |
+| `-s` | `--streamerview` | Launch StreamerView app | `vmrcli.exe -s` |
 
 > **Note:** When using interactive mode (`-i`), command line API commands are ignored.
 

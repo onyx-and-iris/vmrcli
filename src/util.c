@@ -2,7 +2,7 @@
  * @file util.c
  * @author Onyx and Iris (code@onyxandiris.online)
  * @brief Utility functions.
- * @version 0.13.0
+ * @version 0.14.0
  * @date 2024-07-06
  *
  * @copyright Copyright (c) 2024
