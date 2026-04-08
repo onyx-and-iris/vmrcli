@@ -65,7 +65,7 @@ struct result
 };
 
 /**
- * @struct A struct to hold the program configuration, set by CLI args
+ * @struct A struct to hold the program configuration, set by CLI flags
  */
 struct config_t {
     bool mflag;
@@ -96,6 +96,14 @@ static void parse_input(const struct context_t *context, char *input, char *deli
 static void parse_command(const struct context_t *context, char *command);
 static void get(PT_VMR vmr, char *command, struct result *res);
 
+/**
+ * @brief Parse CLI flags and set the program configuration accordingly.
+ * 
+ * @param config Pointer to the configuration struct to be filled
+ * @param argc Number of command-line arguments
+ * @param argv Array of command-line arguments
+ * @return int Index of the first non-option argument
+ */
 int get_options(struct config_t *config, int argc, char *argv[])
 {
     static const struct option options[] =
@@ -196,6 +204,13 @@ int get_options(struct config_t *config, int argc, char *argv[])
     return optind;
 }
 
+/**
+ * @brief Entry point of the program.
+ *
+ * @param argc Number of command-line arguments
+ * @param argv Array of command-line arguments
+ * @return int Exit status
+ */
 int main(int argc, char *argv[])
 {
     struct context_t context = {0};
@@ -282,7 +297,7 @@ static void terminate(PT_VMR vmr, char *msg)
 }
 
 /**
- * @brief Prints the help message
+ * @brief Prints the help message and exits with success status
  */
 static void usage()
 {
