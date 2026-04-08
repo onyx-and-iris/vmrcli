@@ -2,7 +2,7 @@
  * @file vmrcli.c
  * @author Onyx and Iris (code@onyxandiris.online)
  * @brief A Voicemeeter Remote Command Line Interface
- * @version 0.14.0
+ * @version 0.14.1
  * @date 2024-07-06
  *
  * @copyright Copyright (c) 2024
@@ -38,7 +38,7 @@
 #define RES_SZ 512    /* Size of the buffer passed to VBVMR_GetParameterStringW */
 #define COUNT_OF(x) (sizeof(x) / sizeof(x[0]))
 #define DELIMITERS " \t;,"
-#define VERSION "0.14.0"
+#define VERSION "0.14.1"
 
 /**
  * @enum The kind of values a get call may return.
@@ -64,16 +64,9 @@ struct result
     } val;
 };
 
-static bool eflag = false;
-
-static void terminate(PT_VMR vmr, char *msg);
-static void usage();
-static enum kind set_kind(char *kval);
-static void interactive(PT_VMR vmr, bool with_prompt, char *delimiters);
-static void parse_input(PT_VMR vmr, char *input, char *delimiters);
-static void parse_command(PT_VMR vmr, char *command);
-static void get(PT_VMR vmr, char *command, struct result *res);
-
+/**
+ * @struct A struct to hold the program configuration, set by CLI args
+ */
 struct config_t {
     bool mflag;
     bool sflag;
@@ -82,9 +75,26 @@ struct config_t {
     bool iflag;
     bool with_prompt;
     bool fflag;
+    bool eflag;
     int log_level;
     enum kind kind;
 };
+
+/**
+ * @struct A struct to hold the program context, including the config and the iVMR interface pointer
+ */
+struct context_t {
+    struct config_t config;
+    PT_VMR vmr;
+};
+
+static void terminate(PT_VMR vmr, char *msg);
+static void usage();
+static enum kind set_kind(char *kval);
+static void interactive(const struct context_t *context, char *delimiters);
+static void parse_input(const struct context_t *context, char *input, char *delimiters);
+static void parse_command(const struct context_t *context, char *command);
+static void get(PT_VMR vmr, char *command, struct result *res);
 
 int get_options(struct config_t *config, int argc, char *argv[])
 {
@@ -104,11 +114,6 @@ int get_options(struct config_t *config, int argc, char *argv[])
         {NULL,             0,                  NULL,  0 }
     };
 
-    config->iflag = false;
-    config->mflag = false;
-    config->sflag = false;
-    config->cflag = false;
-    config->fflag = false;
     config->with_prompt = true;
     config->log_level = LOG_WARN;
     config->kind = BANANAX64;
@@ -170,7 +175,7 @@ int get_options(struct config_t *config, int argc, char *argv[])
             }
             break;
         case 'e':
-            eflag = true;
+            config->eflag = true;
             break;
         case '?':
             log_fatal("unknown option -- '%c'\n"
@@ -193,78 +198,73 @@ int get_options(struct config_t *config, int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-    struct config_t config;
-    int optind = get_options(&config, argc, argv);
+    struct context_t context = {0};
+    int optind = get_options(&context.config, argc, argv);
 
-    if (argc == 1)
-    {
-        usage();
-    }
+    log_set_level(context.config.log_level);
 
-    log_set_level(config.log_level);
-
-    PT_VMR vmr = create_interface();
-    if (vmr == NULL)
+    context.vmr = create_interface();
+    if (context.vmr == NULL)
     {
         exit(EXIT_FAILURE);
     }
 
-    long rep = login(vmr, config.kind);
+    long rep = login(context.vmr, context.config.kind);
     if (rep != 0)
     {
         if (rep == -2)
-            terminate(vmr, "Timeout logging into the API.");
+            terminate(context.vmr, "Timeout logging into the API.");
         else
-            terminate(vmr, "Error logging into the Voicemeeter API");
+            terminate(context.vmr, "Error logging into the Voicemeeter API");
     }
 
-    if (config.mflag)
+    if (context.config.mflag)
     {
-        run_voicemeeter(vmr, MACROBUTTONS);
+        run_voicemeeter(context.vmr, MACROBUTTONS);
         log_info("MacroButtons app launched");
     }
 
-    if (config.sflag)
+    if (context.config.sflag)
     {
-        run_voicemeeter(vmr, STREAMERVIEW);
+        run_voicemeeter(context.vmr, STREAMERVIEW);
         log_info("StreamerView app launched");
     }
 
-    if (config.cflag)
+    if (context.config.cflag)
     {
-        set_parameter_string(vmr, "command.load", config.cvalue);
-        log_info("Profile %s loaded", config.cvalue);
+        set_parameter_string(context.vmr, "command.load", context.config.cvalue);
+        log_info("Profile %s loaded", context.config.cvalue);
         Sleep(300);
-        clear(vmr, is_pdirty);
+        clear(context.vmr, is_pdirty);
     }
 
     char *delimiter_ptr = DELIMITERS;
-    if (config.fflag)
+    if (context.config.fflag)
     {
         delimiter_ptr++; /* skip space delimiter */
     }
 
-    if (config.iflag)
+    if (context.config.iflag)
     {
         puts("Interactive mode enabled. Enter 'Q' to exit.");
-        interactive(vmr, config.with_prompt, delimiter_ptr);
+        interactive(&context, delimiter_ptr);
     }
     else
     {
         for (int i = optind; i < argc; ++i)
         {
-            parse_input(vmr, argv[i], delimiter_ptr);
+            parse_input(&context, argv[i], delimiter_ptr);
         }
     }
 
-    rep = logout(vmr);
+    rep = logout(context.vmr);
     if (rep != 0)
     {
-        terminate(vmr, "Error logging out of the Voicemeeter API");
+        terminate(context.vmr, "Error logging out of the Voicemeeter API");
     }
 
     log_info("Successfully logged out of the Voicemeeter API");
-    free(vmr);
+    free(context.vmr);
     return EXIT_SUCCESS;
 }
 
@@ -318,12 +318,12 @@ static enum kind set_kind(char *kval)
  * @param with_prompt If true, prints the interactive prompt '>>'
  * @param delimiters A string of delimiter characters to split each input line
  */
-static void interactive(PT_VMR vmr, bool with_prompt, char *delimiters)
+static void interactive(const struct context_t *context, char *delimiters)
 {
     char input[MAX_LINE];
     size_t len;
 
-    if (with_prompt)
+    if (context->config.with_prompt)
         printf(">> ");
     while (fgets(input, MAX_LINE, stdin) != NULL)
     {
@@ -331,9 +331,9 @@ static void interactive(PT_VMR vmr, bool with_prompt, char *delimiters)
         if (len == 1 && toupper(input[0]) == 'Q')
             break;
 
-        parse_input(vmr, input, delimiters);
+        parse_input(context, input, delimiters);
 
-        if (with_prompt)
+        if (context->config.with_prompt)
             printf(">> ");
     }
 }
@@ -371,7 +371,7 @@ static bool add_char_to_token(char *token, size_t *token_len, char c, size_t max
  * @param input Each input line, from stdin or CLI args
  * @param delimiters A string of delimiter characters to split each input line
  */
-static void parse_input(PT_VMR vmr, char *input, char *delimiters)
+static void parse_input(const struct context_t *context, char *input, char *delimiters)
 {
     if (is_comment(input))
         return;
@@ -405,7 +405,7 @@ static void parse_input(PT_VMR vmr, char *input, char *delimiters)
             if (token_length > 0)
             {
                 token[token_length] = '\0';
-                parse_command(vmr, token);
+                parse_command(context, token);
                 token_length = 0;
             }
             
@@ -414,8 +414,12 @@ static void parse_input(PT_VMR vmr, char *input, char *delimiters)
         }
         else
         {
-            add_char_to_token(token, &token_length, *current, MAX_LINE);
-            log_trace("Added char '%c' to token, current token: '%s'", *current, token);
+            if (!add_char_to_token(token, &token_length, *current, MAX_LINE))
+            {
+                log_error("Input token exceeds maximum length of %d characters", MAX_LINE - 1);
+                return;
+            }
+            log_trace("Added char '%c' to token, current token: '%.*s'", *current, (int)token_length, token);
         }
         current++;
     }
@@ -423,7 +427,7 @@ static void parse_input(PT_VMR vmr, char *input, char *delimiters)
     if (token_length > 0)
     {
         token[token_length] = '\0';
-        parse_command(vmr, token);
+        parse_command(context, token);
     }
 }
 
@@ -435,7 +439,7 @@ static void parse_input(PT_VMR vmr, char *input, char *delimiters)
  * @param vmr Pointer to the iVMR interface
  * @param command Each token from the input line as its own command string
  */
-static void parse_command(PT_VMR vmr, char *command)
+static void parse_command(const struct context_t *context, char *command)
 {
     log_debug("Parsing %s", command);
 
@@ -449,8 +453,8 @@ static void parse_command(PT_VMR vmr, char *command)
     struct quickcommand *qc_ptr = command_in_quickcommands(command, quickcommands, (int)COUNT_OF(quickcommands));
     if (qc_ptr != NULL)
     {
-        set_parameters(vmr, qc_ptr->fullcommand);
-        if (eflag) {
+        set_parameters(context->vmr, qc_ptr->fullcommand);
+        if (context->config.eflag) {
             printf("Setting %s\n", qc_ptr->fullcommand);
         }
         return;
@@ -461,13 +465,13 @@ static void parse_command(PT_VMR vmr, char *command)
         command++;
         struct result res = {.type = FLOAT_T};
 
-        get(vmr, command, &res);
+        get(context->vmr, command, &res);
         if (res.type == FLOAT_T)
         {
             if (res.val.f == 1 || res.val.f == 0)
             {
-                set_parameter_float(vmr, command, 1 - res.val.f);
-                if (eflag) {
+                set_parameter_float(context->vmr, command, 1 - res.val.f);
+                if (context->config.eflag) {
                     printf("Toggling %s\n", command);
                 }
             }
@@ -483,8 +487,8 @@ static void parse_command(PT_VMR vmr, char *command)
         
         if (add_quotes_if_needed(command, quoted_command, MAX_LINE))
         {
-            set_parameters(vmr, quoted_command);
-            if (eflag) {
+            set_parameters(context->vmr, quoted_command);
+            if (context->config.eflag) {
                 printf("Setting %s\n", command);
             }
         }
@@ -497,7 +501,7 @@ static void parse_command(PT_VMR vmr, char *command)
     {
         struct result res = {.type = FLOAT_T};
 
-        get(vmr, command, &res);
+        get(context->vmr, command, &res);
         switch (res.type)
         {
         case FLOAT_T:
